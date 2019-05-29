@@ -1,0 +1,71 @@
+[
+    {
+        "test": {
+            "name": "B2C_03",
+            "description": "Domestic / RT / Promo / Economy Classic / Adt"
+        },
+        "outbound": {
+            "date": "15/06/2019",
+            "departure": {
+                "city": "",
+                "airport": "FIUMICINO"
+            },
+            "arrival": {
+                "city": "",
+                "airport": "CAPODICHINO"
+            },
+            "bookingClass": "ECONOMY CLASSIC"
+        },
+        "inbound": {
+            "date": "22/06/2019",
+            "departure": {
+                "city": "",
+                "airport": "CAPODICHINO"
+            },
+            "arrival": {
+                "city": "",
+                "airport": "FIUMICINO"
+            },
+            "bookingClass": "ECONOMY CLASSIC"
+        },
+        "promo": {
+            "code": "PREMIUM1"
+        },
+        "seats": {
+            "reserve": false
+        },
+        "passengers": [
+            {
+                "type": "adult",
+                "firstName": "MARIO",
+                "lastName": "ROSSI",
+                "gender": "M"
+            }
+        ],
+        "contacts": [
+            {
+                "type": "email",
+                "email": "mariorossi1310@mailinator.com"
+            },
+            {
+                "type": "phone",
+                "name": "Cellulare",
+                "prefix": "Italia (+39)",
+                "number": "3313364746"
+            }
+        ],
+        "consents": [
+            "newsletter"
+        ],
+        "payment": {
+            "type": "card",
+            "cardIssuer": "Visa",
+            "cardNumber": "4646464646464644",
+            "expiryMonth": "10",
+            "expiryYear": "2020",
+            "cvv": "737",
+            "accountHolderFirstName": "MARIO",
+            "accountHolderLastName": "ROSSI"
+        }
+    }
+]
