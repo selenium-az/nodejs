@@ -4,6 +4,7 @@ const PDFDocument = require('pdfkit');
 const fs = require('fs');
 const moment = require('moment');
 const camelcase = require('camelcase');
+const dotenv = require('dotenv');
 
 const firefox = require('selenium-webdriver/firefox');
 const chrome = require('selenium-webdriver/chrome');
@@ -11,11 +12,13 @@ const chrome = require('selenium-webdriver/chrome');
 const width = 1280;
 const height = 1024;
 
+dotenv.config();
+
 logging.installConsoleHandler();
 logging.getLogger('webdriver.http').setLevel(logging.Level.ALL);
 
 (async function B2CTest() {
-  let data = JSON.parse(fs.readFileSync('./booking.json', 'utf8'));
+  let data = JSON.parse(fs.readFileSync(process.env.SELENIUM_TEST_DATA, 'utf8'));
   for (let i = 0; i < data.length; i++) {
     await BookFlight(data[i]);
   }
@@ -138,12 +141,14 @@ async function BookFlight(data) {
 
     startTime = moment();
 
+    const SELENIUM_BROWSER_PROFILE_PATH = `${__dirname}/browser_profiles/${process.env.SELENIUM_BROWSER}/alitalia.selenium`;
+
     let firefoxOptions = new firefox.Options()
-      .setProfile(process.env.SELENIUM_BROWSER_PROFILE_PATH)
+      .setProfile(browserProfilePath)
       .windowSize({ width, height });
 
     let chromeOptions = new chrome.Options()
-      .addArguments(`user-data-dir=${process.env.SELENIUM_BROWSER_PROFILE_PATH}`)
+      .addArguments(`user-data-dir=${SELENIUM_BROWSER_PROFILE_PATH}`)
       .addArguments(`user-agent=${process.env.SELENIUM_BROWSER_USER_AGENT}`)
       .windowSize({ width, height });
 
@@ -274,6 +279,11 @@ async function BookFlight(data) {
           await elm.click();
         }
       });
+    _click('xpath=//*[@id="addBabies"]')
+  }
+
+  async function _click(locator, repeat) {
+
   }
 
   async function setOutboundDate(flightDate, oneWay) {
@@ -836,20 +846,16 @@ async function BookFlight(data) {
             console.log('Flight search loader found.');
           });
 
-        /*
-        by = By.xpath('//*[contains(@class,"waitingPage ") and contains(@style,"display: none")]');
+        await driver.wait(until.urlContains('/booking/confirmation.html'), 60000)
+          .then(function () {
+            console.log('Booking confirmation psge displayed.');
+          });
+
+        by = By.xpath('//*[@class="thankyoupage"]//*[contains(@class,"afterpayment")]');
         await driver.wait(until.elementLocated(by), 60000)
           .then(function () {
-            console.log('Flight search loader found.');
+            console.log('Booking data displayed.');
           });
-        */
-
-        await driver.wait(until.urlContains('confirmation.html'), 60000)
-          .then(function () {
-            console.log('Flight search loader found.');
-          });
-
-
 
       }
     }
