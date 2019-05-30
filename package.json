@@ -24,6 +24,7 @@
     "pdfkit": "^0.9.1",
     "request": "^2.88.0",
     "selenium-webdriver": "^4.0.0-alpha.1",
-    "unzip": "^0.1.11"
+    "unzip": "^0.1.11",
+    "dotenv": "^8.0.0"
   }
 }
