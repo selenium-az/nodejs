@@ -15,7 +15,7 @@ const height = 1024;
 dotenv.config();
 
 logging.installConsoleHandler();
-logging.getLogger('webdriver.http').setLevel(logging.Level.ALL);
+logging.getLogger('webdriver.http').setLevel(logging.Level.INFO);
 
 _mkdirSync(`./browser_captures`);
 _mkdirSync(`./browser_captures/${process.env.SELENIUM_BROWSER}`);
