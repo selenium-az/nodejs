@@ -17,14 +17,26 @@ dotenv.config();
 logging.installConsoleHandler();
 logging.getLogger('webdriver.http').setLevel(logging.Level.ALL);
 
-(async function B2CTest() {
+_mkdirSync(`./browser_captures`);
+_mkdirSync(`./browser_captures/${process.env.SELENIUM_BROWSER}`);
+
+(async function RunTestSuite() {
+
   let data = JSON.parse(fs.readFileSync(process.env.SELENIUM_TEST_DATA, 'utf8'));
-  for (let i = 0; i < data.length; i++) {
-    await BookFlight(data[i]);
+
+  if (data.tests === undefined || data.tests.length === 0) {
+    console.log('Unable to run tests. Test suite is empty!');
+    return;
+  }
+
+  console.log(`Running '${data.name}' test suite ...`);
+
+  for (let i = 0; i < data.tests.length; i++) {
+    await RunTest(data.tests[i].name, data.tests[i].description, data.tests[i].data);
   }
 })();
 
-async function BookFlight(data) {
+async function RunTest(testName, testDescription, data) {
   let driver;
   let startTime;
 
@@ -94,21 +106,16 @@ async function BookFlight(data) {
     await driver.takeScreenshot().then(
       function (image, err) {
         let captureDir = `./browser_captures/${process.env.SELENIUM_BROWSER}/${startTime.format('YYYYMMDDHHmmSS')}`;
-        try {
-          fs.statSync(captureDir);
-        } catch (err) {
-          if (err.code === 'ENOENT') {
-            fs.mkdirSync(captureDir);
-          }
-        }
+        _mkdirSync(captureDir);
         let captureCount = fs.readdirSync(captureDir).length + 1;
         let captureFile = `${captureDir}/${captureCount.toLocaleString(undefined, { minimumIntegerDigits: 2 })}_${captureTitle}.png`;
         fs.writeFileSync(captureFile, image, 'base64');
       }
     )
   }
-
+ 
   function capturesToPdf(data) {
+
 
     let captures_folder = `./browser_captures/${process.env.SELENIUM_BROWSER}/${startTime.format('YYYYMMDDHHmmSS')}`;
 
@@ -118,7 +125,7 @@ async function BookFlight(data) {
       }
       let doc = new PDFDocument;
 
-      doc.pipe(fs.createWriteStream(`${captures_folder}/${data.test.name}.pdf`));
+      doc.pipe(fs.createWriteStream(`${captures_folder}/${testName}.pdf`));
 
       for (let i = 0; i < files.length; i++) {
 
@@ -137,7 +144,7 @@ async function BookFlight(data) {
 
   async function startSession() {
 
-    console.log('Starting Test ...');
+    console.log(`Starting '${testName}' test ...`);
 
     startTime = moment();
 
@@ -402,7 +409,7 @@ async function BookFlight(data) {
     /**
      * Flight search
      */
-    console.log('Search flight ...');
+    console.log('Search travel solutions ...');
 
     by = By.xpath('//*[@id="panel-travel-options" and contains(@style,"display: block")]//button[@value="cerca"]');
     await driver.wait(until.elementLocated(by), 60000)
@@ -445,7 +452,7 @@ async function BookFlight(data) {
 
     await capturePage('flight_search_results')
       .then(function () {
-        console.log('Captured travel options page');
+        console.log('Captured travel solutions page.');
       });
 
     by = By.xpath(`//*[contains(@class,"bookingTable")]//a[@data-type="${camelcase(data.outbound.bookingClass)}" and @data-details-route="0"]//*[@class="price"]`);
@@ -580,7 +587,7 @@ async function BookFlight(data) {
 
     async function fulfillPassengersAndContactsData() {
 
-      await driver.wait(until.urlContains('/passengers-data.html'), 60000)
+      await driver.wait(until.urlContains('/booking/passengers-data.html'), 60000)
         .then(function () {
           console.log('Passengers data page displayed.');
         });
@@ -740,7 +747,7 @@ async function BookFlight(data) {
     }
 
     async function fulfillAncillaryData() {
-      await driver.wait(until.urlContains('/ancillary.html'), 60000)
+      await driver.wait(until.urlContains('/booking/ancillary.html'), 60000)
         .then(function () {
           console.log('Ancillary page displayed');
         });
@@ -775,7 +782,7 @@ async function BookFlight(data) {
     }
 
     async function fulfillPaymentData() {
-      await driver.wait(until.urlContains('/payment.html'), 60000)
+      await driver.wait(until.urlContains('/booking/payment.html'), 60000)
         .then(function () {
           console.log('Payment page displayed');
         });
@@ -852,7 +859,7 @@ async function BookFlight(data) {
             console.log('Booking confirmation psge displayed.');
           });
 
-        by = By.xpath('//*[@class="thankyoupage"]//*[contains(@class,"afterpayment")]');
+        by = By.xpath('//*[@class="thankyoupage"]//*[contains(@class,"afterPayment")]');
         await driver.wait(until.elementLocated(by), 60000)
           .then(function () {
             console.log('Booking data displayed.');
@@ -863,4 +870,14 @@ async function BookFlight(data) {
 
   }
 
+}
+
+function _mkdirSync(dirPath) {
+  try {
+    fs.statSync(dirPath);
+  } catch (err) {
+    if (err.code === 'ENOENT') {
+      fs.mkdirSync(dirPath);
+    }
+  }
 }
