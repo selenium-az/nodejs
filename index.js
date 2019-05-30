@@ -145,7 +145,7 @@ async function BookFlight(data) {
     const SELENIUM_HEADLESS = process.env.SELENIUM_HEADLESS === undefined || process.env.SELENIUM_HEADLESS === 'true' ? true : false;
 
     let firefoxOptions = new firefox.Options()
-      .setProfile(browserProfilePath)
+      .setProfile(SELENIUM_BROWSER_PROFILE_PATH)
       .windowSize({ width, height });
 
     let chromeOptions = new chrome.Options()
