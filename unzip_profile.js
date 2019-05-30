@@ -1,5 +1,8 @@
 const fs = require('fs');
 const unzip = require('unzip');
+const dotenv = require('dotenv');
+
+dotenv.config();
 
 console.log('Unzipping browser profile ...');
 

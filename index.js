@@ -142,6 +142,7 @@ async function BookFlight(data) {
     startTime = moment();
 
     const SELENIUM_BROWSER_PROFILE_PATH = `${__dirname}/browser_profiles/${process.env.SELENIUM_BROWSER}/alitalia.selenium`;
+    const SELENIUM_HEADLESS = process.env.SELENIUM_HEADLESS === undefined || process.env.SELENIUM_HEADLESS === 'true' ? true : false;
 
     let firefoxOptions = new firefox.Options()
       .setProfile(browserProfilePath)
@@ -152,7 +153,7 @@ async function BookFlight(data) {
       .addArguments(`user-agent=${process.env.SELENIUM_BROWSER_USER_AGENT}`)
       .windowSize({ width, height });
 
-    if (process.env.SELENIUM_HEADLESS === "true") {
+    if (SELENIUM_HEADLESS) {
       firefoxOptions.headless();
       chromeOptions.headless();
     }
