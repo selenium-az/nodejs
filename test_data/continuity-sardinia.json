@@ -1,0 +1,587 @@
+{
+    "name": "B2C - CONTINUITY SARDINIA",
+    "description": "Continuità territoriale sardegna 15/6 - 15/9",
+    "url": "https://preprod.alitalia.com/it_it",
+    "tests": [
+        {
+            "name": "BC-001",
+            "description": "FCO-CAG - RT - Fuori Bando",
+            "data": {
+                "outbound": {
+                    "date": "12/06/2019",
+                    "departure": {
+                        "city": "",
+                        "airport": "FIUMICINO"
+                    },
+                    "arrival": {
+                        "city": "CAGLIARI",
+                        "airport": ""
+                    },
+                    "bookingClass": "ECONOMY FLEX"
+                },
+                "inbound": {
+                    "date": "13/06/2019",
+                    "departure": {
+                        "city": "CAGLIARI",
+                        "airport": ""
+                    },
+                    "arrival": {
+                        "city": "",
+                        "airport": "FIUMICINO"
+                    },
+                    "bookingClass": "ECONOMY FLEX"
+                },
+                "disclaimer": {},
+                "promo": {
+                    "code": ""
+                },
+                "seats": {
+                    "reserve": false
+                },
+                "passengers": [
+                    {
+                        "type": "adult",
+                        "firstName": "MARIO",
+                        "lastName": "ROSSI",
+                        "gender": "M"
+                    }
+                ],
+                "contacts": [
+                    {
+                        "type": "email",
+                        "email": "mariorossi1310@mailinator.com"
+                    },
+                    {
+                        "type": "phone",
+                        "name": "Cellulare",
+                        "prefix": "Italia (+39)",
+                        "number": "3313364746"
+                    }
+                ],
+                "consents": [
+                    "newsletter"
+                ],
+                "no_payment": {
+                    "type": "card",
+                    "cardIssuer": "Visa",
+                    "cardNumber": "4646464646464644",
+                    "expiryMonth": "10",
+                    "expiryYear": "2020",
+                    "cvv": "737",
+                    "accountHolderFirstName": "MARIO",
+                    "accountHolderLastName": "ROSSI"
+                }
+            },
+            "commands": []
+        },
+        {
+            "name": "BC-002",
+            "description": "CAG-FCO - RT - RES - A cavallo",
+            "data": {
+                "outbound": {
+                    "date": "12/06/2019",
+                    "departure": {
+                        "city": "",
+                        "airport": "CAGLIARI"
+                    },
+                    "arrival": {
+                        "city": "FIUMICINO",
+                        "airport": ""
+                    },
+                    "bookingClass": "BRAND CONTINUITY"
+                },
+                "inbound": {
+                    "date": "17/06/2019",
+                    "departure": {
+                        "city": "FIUMICINO",
+                        "airport": ""
+                    },
+                    "arrival": {
+                        "city": "",
+                        "airport": "CAGLIARI"
+                    },
+                    "bookingClass": "BRAND CONTINUITY"
+                },
+                "disclaimer": {
+                    "confirm": "YES"
+                },
+                "promo": {
+                    "code": ""
+                },
+                "seats": {
+                    "reserve": false
+                },
+                "passengers": [
+                    {
+                        "type": "adult",
+                        "firstName": "MARIO",
+                        "lastName": "ROSSI",
+                        "gender": "M"
+                    }
+                ],
+                "contacts": [
+                    {
+                        "type": "email",
+                        "email": "mariorossi1310@mailinator.com"
+                    },
+                    {
+                        "type": "phone",
+                        "name": "Cellulare",
+                        "prefix": "Italia (+39)",
+                        "number": "3313364746"
+                    }
+                ],
+                "consents": [
+                    "newsletter"
+                ],
+                "no_payment": {
+                    "type": "card",
+                    "cardIssuer": "Visa",
+                    "cardNumber": "4646464646464644",
+                    "expiryMonth": "10",
+                    "expiryYear": "2020",
+                    "cvv": "737",
+                    "accountHolderFirstName": "MARIO",
+                    "accountHolderLastName": "ROSSI"
+                }
+            },
+            "commands": []
+        },
+        {
+            "name": "BC-003",
+            "description": "FCO-CAG - RT - NO RES - A cavallo",
+            "data": {
+                "outbound": {
+                    "date": "12/06/2019",
+                    "departure": {
+                        "city": "",
+                        "airport": "FIUMICINO"
+                    },
+                    "arrival": {
+                        "city": "CAGLIARI",
+                        "airport": ""
+                    },
+                    "bookingClass": "ECONOMY FLEX"
+                },
+                "inbound": {
+                    "date": "17/06/2019",
+                    "departure": {
+                        "city": "CAGLIARI",
+                        "airport": ""
+                    },
+                    "arrival": {
+                        "city": "",
+                        "airport": "FIUMICINO"
+                    },
+                    "bookingClass": "ECONOMY FLEX"
+                },
+                "disclaimer": {
+                    "confirm": "NO"
+                },
+                "promo": {
+                    "code": ""
+                },
+                "seats": {
+                    "reserve": false
+                },
+                "passengers": [
+                    {
+                        "type": "adult",
+                        "firstName": "MARIO",
+                        "lastName": "ROSSI",
+                        "gender": "M"
+                    }
+                ],
+                "contacts": [
+                    {
+                        "type": "email",
+                        "email": "mariorossi1310@mailinator.com"
+                    },
+                    {
+                        "type": "phone",
+                        "name": "Cellulare",
+                        "prefix": "Italia (+39)",
+                        "number": "3313364746"
+                    }
+                ],
+                "consents": [
+                    "newsletter"
+                ],
+                "no_payment": {
+                    "type": "card",
+                    "cardIssuer": "Visa",
+                    "cardNumber": "4646464646464644",
+                    "expiryMonth": "10",
+                    "expiryYear": "2020",
+                    "cvv": "737",
+                    "accountHolderFirstName": "MARIO",
+                    "accountHolderLastName": "ROSSI"
+                }
+            },
+            "commands": []
+        },
+        {
+            "name": "BC-004",
+            "description": "CAG-FCO - RT - RES - In Bando",
+            "data": {
+                "outbound": {
+                    "date": "18/08/2019",
+                    "departure": {
+                        "city": "",
+                        "airport": "CAGLIARI"
+                    },
+                    "arrival": {
+                        "city": "FIUMICINO",
+                        "airport": ""
+                    },
+                    "bookingClass": "BRAND CONTINUITY"
+                },
+                "inbound": {
+                    "date": "25/08/2019",
+                    "departure": {
+                        "city": "FIUMICINO",
+                        "airport": ""
+                    },
+                    "arrival": {
+                        "city": "",
+                        "airport": "CAGLIARI"
+                    },
+                    "bookingClass": "BRAND CONTINUITY"
+                },
+                "disclaimer": {
+                    "confirm": "YES"
+                },
+                "promo": {
+                    "code": ""
+                },
+                "seats": {
+                    "reserve": false
+                },
+                "passengers": [
+                    {
+                        "type": "adult",
+                        "firstName": "MARIO",
+                        "lastName": "ROSSI",
+                        "gender": "M"
+                    }
+                ],
+                "contacts": [
+                    {
+                        "type": "email",
+                        "email": "mariorossi1310@mailinator.com"
+                    },
+                    {
+                        "type": "phone",
+                        "name": "Cellulare",
+                        "prefix": "Italia (+39)",
+                        "number": "3313364746"
+                    }
+                ],
+                "consents": [
+                    "newsletter"
+                ],
+                "no_payment": {
+                    "type": "card",
+                    "cardIssuer": "Visa",
+                    "cardNumber": "4646464646464644",
+                    "expiryMonth": "10",
+                    "expiryYear": "2020",
+                    "cvv": "737",
+                    "accountHolderFirstName": "MARIO",
+                    "accountHolderLastName": "ROSSI"
+                }
+            },
+            "commands": []
+        },
+        {
+            "name": "BC-005",
+            "description": "FCO-CAG - RT - NO RES - In Bando",
+            "data": {
+                "outbound": {
+                    "date": "18/08/2019",
+                    "departure": {
+                        "city": "",
+                        "airport": "FIUMICINO"
+                    },
+                    "arrival": {
+                        "city": "CAGLIARI",
+                        "airport": ""
+                    },
+                    "bookingClass": "ECONOMY FLEX"
+                },
+                "inbound": {
+                    "date": "25/08/2019",
+                    "departure": {
+                        "city": "CAGLIARI",
+                        "airport": ""
+                    },
+                    "arrival": {
+                        "city": "",
+                        "airport": "FIUMICINO"
+                    },
+                    "bookingClass": "ECONOMY FLEX"
+                },
+                "disclaimer": {
+                    "confirm": "NO"
+                },
+                "promo": {
+                    "code": ""
+                },
+                "seats": {
+                    "reserve": false
+                },
+                "passengers": [
+                    {
+                        "type": "adult",
+                        "firstName": "MARIO",
+                        "lastName": "ROSSI",
+                        "gender": "M"
+                    }
+                ],
+                "contacts": [
+                    {
+                        "type": "email",
+                        "email": "mariorossi1310@mailinator.com"
+                    },
+                    {
+                        "type": "phone",
+                        "name": "Cellulare",
+                        "prefix": "Italia (+39)",
+                        "number": "3313364746"
+                    }
+                ],
+                "consents": [
+                    "newsletter"
+                ],
+                "no_payment": {
+                    "type": "card",
+                    "cardIssuer": "Visa",
+                    "cardNumber": "4646464646464644",
+                    "expiryMonth": "10",
+                    "expiryYear": "2020",
+                    "cvv": "737",
+                    "accountHolderFirstName": "MARIO",
+                    "accountHolderLastName": "ROSSI"
+                }
+            },
+            "commands": []
+        },
+        {
+            "name": "BC-006",
+            "description": "CAG-FCO - RT - RES - A cavallo",
+            "data": {
+                "outbound": {
+                    "date": "12/09/2019",
+                    "departure": {
+                        "city": "",
+                        "airport": "CAGLIARI"
+                    },
+                    "arrival": {
+                        "city": "FIUMICINO",
+                        "airport": ""
+                    },
+                    "bookingClass": "BRAND CONTINUITY"
+                },
+                "inbound": {
+                    "date": "17/09/2019",
+                    "departure": {
+                        "city": "FIUMICINO",
+                        "airport": ""
+                    },
+                    "arrival": {
+                        "city": "",
+                        "airport": "CAGLIARI"
+                    },
+                    "bookingClass": "BRAND CONTINUITY"
+                },
+                "disclaimer": {
+                    "confirm": "YES"
+                },
+                "promo": {
+                    "code": ""
+                },
+                "seats": {
+                    "reserve": false
+                },
+                "passengers": [
+                    {
+                        "type": "adult",
+                        "firstName": "MARIO",
+                        "lastName": "ROSSI",
+                        "gender": "M"
+                    }
+                ],
+                "contacts": [
+                    {
+                        "type": "email",
+                        "email": "mariorossi1310@mailinator.com"
+                    },
+                    {
+                        "type": "phone",
+                        "name": "Cellulare",
+                        "prefix": "Italia (+39)",
+                        "number": "3313364746"
+                    }
+                ],
+                "consents": [
+                    "newsletter"
+                ],
+                "no_payment": {
+                    "type": "card",
+                    "cardIssuer": "Visa",
+                    "cardNumber": "4646464646464644",
+                    "expiryMonth": "10",
+                    "expiryYear": "2020",
+                    "cvv": "737",
+                    "accountHolderFirstName": "MARIO",
+                    "accountHolderLastName": "ROSSI"
+                }
+            },
+            "commands": []
+        },
+        {
+            "name": "BC-007",
+            "description": "FCO-CAG - RT - NO RES - A cavallo",
+            "data": {
+                "outbound": {
+                    "date": "12/09/2019",
+                    "departure": {
+                        "city": "",
+                        "airport": "FIUMICINO"
+                    },
+                    "arrival": {
+                        "city": "CAGLIARI",
+                        "airport": ""
+                    },
+                    "bookingClass": "ECONOMY FLEX"
+                },
+                "inbound": {
+                    "date": "17/09/2019",
+                    "departure": {
+                        "city": "CAGLIARI",
+                        "airport": ""
+                    },
+                    "arrival": {
+                        "city": "",
+                        "airport": "FIUMICINO"
+                    },
+                    "bookingClass": "ECONOMY FLEX"
+                },
+                "disclaimer": {
+                    "confirm": "NO"
+                },
+                "promo": {
+                    "code": ""
+                },
+                "seats": {
+                    "reserve": false
+                },
+                "passengers": [
+                    {
+                        "type": "adult",
+                        "firstName": "MARIO",
+                        "lastName": "ROSSI",
+                        "gender": "M"
+                    }
+                ],
+                "contacts": [
+                    {
+                        "type": "email",
+                        "email": "mariorossi1310@mailinator.com"
+                    },
+                    {
+                        "type": "phone",
+                        "name": "Cellulare",
+                        "prefix": "Italia (+39)",
+                        "number": "3313364746"
+                    }
+                ],
+                "consents": [
+                    "newsletter"
+                ],
+                "no_payment": {
+                    "type": "card",
+                    "cardIssuer": "Visa",
+                    "cardNumber": "4646464646464644",
+                    "expiryMonth": "10",
+                    "expiryYear": "2020",
+                    "cvv": "737",
+                    "accountHolderFirstName": "MARIO",
+                    "accountHolderLastName": "ROSSI"
+                }
+            },
+            "commands": []
+        },
+        {
+            "name": "BC-008",
+            "description": "FCO-CAG - RT - Fuori Bando",
+            "data": {
+                "outbound": {
+                    "date": "17/09/2019",
+                    "departure": {
+                        "city": "",
+                        "airport": "FIUMICINO"
+                    },
+                    "arrival": {
+                        "city": "CAGLIARI",
+                        "airport": ""
+                    },
+                    "bookingClass": "ECONOMY FLEX"
+                },
+                "inbound": {
+                    "date": "19/09/2019",
+                    "departure": {
+                        "city": "CAGLIARI",
+                        "airport": ""
+                    },
+                    "arrival": {
+                        "city": "",
+                        "airport": "FIUMICINO"
+                    },
+                    "bookingClass": "ECONOMY FLEX"
+                },
+                "disclaimer": {},
+                "promo": {
+                    "code": ""
+                },
+                "seats": {
+                    "reserve": false
+                },
+                "passengers": [
+                    {
+                        "type": "adult",
+                        "firstName": "MARIO",
+                        "lastName": "ROSSI",
+                        "gender": "M"
+                    }
+                ],
+                "contacts": [
+                    {
+                        "type": "email",
+                        "email": "mariorossi1310@mailinator.com"
+                    },
+                    {
+                        "type": "phone",
+                        "name": "Cellulare",
+                        "prefix": "Italia (+39)",
+                        "number": "3313364746"
+                    }
+                ],
+                "consents": [
+                    "newsletter"
+                ],
+                "no_payment": {
+                    "type": "card",
+                    "cardIssuer": "Visa",
+                    "cardNumber": "4646464646464644",
+                    "expiryMonth": "10",
+                    "expiryYear": "2020",
+                    "cvv": "737",
+                    "accountHolderFirstName": "MARIO",
+                    "accountHolderLastName": "ROSSI"
+                }
+            },
+            "commands": []
+        }
+    ]
+}

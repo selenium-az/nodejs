@@ -20,11 +20,12 @@
   "dependencies": {
     "camelcase": "^5.3.1",
     "capitalize": "^2.0.0",
+    "dotenv": "^8.0.0",
     "moment": "^2.24.0",
     "pdfkit": "^0.9.1",
     "request": "^2.88.0",
     "selenium-webdriver": "^4.0.0-alpha.1",
     "unzip": "^0.1.11",
-    "dotenv": "^8.0.0"
+    "yargs": "^13.2.4"
   }
 }
