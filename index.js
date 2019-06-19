@@ -9,6 +9,9 @@ const firefox = require('selenium-webdriver/firefox');
 const chrome = require('selenium-webdriver/chrome');
 
 const argv = require('yargs')
+  .string('st')
+  .alias('st', 'select-test')
+  .describe('st', 'Executes only selected test(s) from test suite.')
   .boolean('gc')
   .default('gc', false)
   .alias('gc', 'generate-commands')
@@ -26,12 +29,13 @@ const argv = require('yargs')
 
 dotenv.config();
 
-const width = 1280;
-const height = 1024;
-
 const SELENIUM_COMMAND_TIMEOUT = (process.env.SELENIUM_COMMAND_TIMEOUT ? int.parse(process.env.SELENIUM_COMMAND_TIMEOUT) : 60) * 1000;
 
 const SELENIUM_LOG_LEVEL = process.env.SELENIUM_LOG_LEVEL === 'DEBUG' ? logging.Level.ALL : logging.Level.INFO;
+
+var SELENIUM_TARGET_URL = process.env.SELENIUM_TARGET_URL;
+
+var SELENIUM_WINDOW_SIZE = typeof process.env.SELENIUM_WINDOW_SIZE === 'string' ? process.env.SELENIUM_WINDOW_SIZE : '1280x1024';
 
 logging.installConsoleHandler();
 logging.getLogger('webdriver.http').setLevel(SELENIUM_LOG_LEVEL);
@@ -48,18 +52,34 @@ _mkdirSync(`./browser_captures/${process.env.SELENIUM_BROWSER}`);
     return;
   }
 
-  console.log(`Running '${test_suite.name}' test suite ...`);
+  let test_selected = test_suite;
+  if (argv.st) {
+    test_selected = test_suite.tests.filter(function (t) {
+      return `\\s*${t.name}\\s*`.match(argv.st) !== null;
+    });
+    if (test_selected.length === 0) {
+      console.log('Unable to run tests. Selected test(s) not found!');
+      return;
+    }
+    console.log(`Running '${argv.st}' test(s) ...`);
+  } else {
+    console.log(`Running '${test_suite.name}' test suite ...`);
+  }
+
+  if (SELENIUM_TARGET_URL === undefined) {
+    SELENIUM_TARGET_URL = test_suite.url;
+  }
 
   test_suite.start = moment();
 
-  for (let i = 0; i < test_suite.tests.length; i++) {
-    await RunTest(test_suite.tests[i], test_suite);
+  for (let i = 0; i < test_selected.length; i++) {
+    await RunTest(test_selected[i], test_suite);
   }
 
   if (argv.gc || argv.gco) {
     if (argv.gco) {
-      for (let i = 0; i < test_suite.tests.length; i++) {
-        test_suite.tests[i].data = null;
+      for (let i = 0; i < test_selected.length; i++) {
+        test_selected[i].data = null;
       }
     }
     saveCommands(test_suite, `./test_data/${test_suite.name}_${test_suite.start.format('YYYYMMDDHHmmSS')}.json`);
@@ -67,7 +87,7 @@ _mkdirSync(`./browser_captures/${process.env.SELENIUM_BROWSER}`);
 
   function saveCommands(data, path) {
     try {
-      fs.writeFileSync(path, JSON.stringify(data));
+      fs.writeFileSync(path, JSON.stringify(data, null, 2));
     } catch (err) {
       console.error(err);
     }
@@ -119,24 +139,17 @@ async function RunTest(test, testSuite) {
 
     await _close({});
 
-  } catch (error) {
+  } catch (err) {
+    console.log(`Error occurred: ${err.message}`);
     if (driver) {
-      await capturePage('error')
-        .then(function () {
-          console.log('Error occurred');
-        });
-    }
-  } finally {
-    if (driver) {
+      await capturePage('error');
+      await driver.quit();
       capturesToPdf(test.data);
-      await driver.quit()
-        .then(function () {
-          console.log('Web driver destroyed');
-        });
     }
   }
 
   async function capturePage(captureTitle) {
+    await driver.sleep(2000);
     await driver.takeScreenshot().then(
       function (image, err) {
         _mkdirSync(`./browser_captures/${process.env.SELENIUM_BROWSER}/${suiteStart.format('YYYYMMDDHHmmSS')}`);
@@ -197,13 +210,11 @@ async function RunTest(test, testSuite) {
     const ENABLE_VERBOSE_LOGGING = SELENIUM_LOG_LEVEL === logging.Level.DEBUG || SELENIUM_LOG_LEVEL === logging.Level.ALL;
 
     let firefoxOptions = new firefox.Options()
-      .setProfile(SELENIUM_BROWSER_PROFILE_PATH)
-      .windowSize({ width, height });
+      .setProfile(SELENIUM_BROWSER_PROFILE_PATH);
 
     let chromeOptions = new chrome.Options()
       .addArguments(`user-data-dir=${SELENIUM_BROWSER_PROFILE_PATH}`)
-      .addArguments(`user-agent=${process.env.SELENIUM_BROWSER_USER_AGENT}`)
-      .windowSize({ width, height });
+      .addArguments(`user-agent=${process.env.SELENIUM_BROWSER_USER_AGENT}`);
 
     if (SELENIUM_HEADLESS) {
       firefoxOptions.headless();
@@ -229,8 +240,17 @@ async function RunTest(test, testSuite) {
   async function startSearch() {
 
     await _open({
-      target: process.env.SELENIUM_TARGET_URL,
+      target: '',
       successMessage: 'Alitalia Home Page showed.'
+    });
+
+    await _setWindowSize({
+      target: SELENIUM_WINDOW_SIZE
+    });
+
+    await _runScript({
+      target: 'document.querySelector(".cookie-bar a.closeCookie").click();',
+      successMessage: 'Cookie bar closed.'
     });
 
     await _echo({
@@ -239,8 +259,13 @@ async function RunTest(test, testSuite) {
     });
 
     await _waitForElementPresent({
-      target: 'xpath=//*[@class="cerca-volo"]//*[@id="booking-search"]',
+      target: 'xpath=//*[@class="cerca-volo"]',
       successMessage: 'Booking flight widget found.'
+    });
+
+    await _captureEntirePageScreenshot({
+      target: 'start_page',
+      successMessage: 'Captured starting page.'
     });
 
   }
@@ -287,17 +312,15 @@ async function RunTest(test, testSuite) {
     });
 
     if (test.data.inbound == null) {
-      /*
-      by = By.xpath('//*[@id="validate_date"]/button');
-      await driver.wait(until.elementLocated(by))
-        .then(async function (elm) {
-          await driver.wait(until.elementIsEnabled(elm), SELENIUM_COMMAND_TIMEOUT);
-          await elm.click();
-        });
-      */
+
+      await _waitForElementPresent({
+        target: 'xpath=//*[@id="validate_date"]/button'
+      });
+
       await _click({
         target: 'xpath=//*[@id="validate_date"]/button'
       });
+
     }
 
     await _waitForElementPresent({
@@ -313,20 +336,30 @@ async function RunTest(test, testSuite) {
     }).length - 1;
 
     if (clickCount > 0) {
+      /*
       await _click({
         target: 'xpath=//*[@id="addAdults"]',
         value: `${clickCount}`
       });
+      */
+     await _runScript({
+      target: `var elm = document.getElementById("addAdults"); for (var i = 0; i < ${clickCount}; i++) { elm.click(); };`
+    });
     }
 
     clickCount = passengers.filter(function (p) {
       return p.type == "child";
-    }).length;
+    }).length;    
 
     if (clickCount > 0) {
+      /*
       await _click({
         target: 'xpath=//*[@id="addKids"]',
         value: `${clickCount}`
+      });
+      */
+      await _runScript({
+        target: `var elm = document.getElementById("addKids"); for (var i = 0; i < ${clickCount}; i++) { elm.click(); };`
       });
     }
 
@@ -334,10 +367,15 @@ async function RunTest(test, testSuite) {
       return p.type == "infant";
     }).length;
 
-    if (clickCount > 0) {
+    if (clickCount > 0) {      
+      /*
       await _click({
         target: 'xpath=//*[@id="addBabies"]',
         value: `${clickCount}`
+      });
+      */
+      await _runScript({
+        target: `var elm = document.getElementById("addBabies"); for (var i = 0; i < ${clickCount}; i++) { elm.click(); };`
       });
     }
 
@@ -444,9 +482,14 @@ async function RunTest(test, testSuite) {
   }
 
   async function _open(cmd) {
-    cmd.command = 'open';
     if (argv.gc || argv.gco) {
-      test.commands.push(cmd);
+      test.commands.push({
+        command: 'open',
+        target: cmd.target || '',
+        value: cmd.value || '',
+        successMessage: cmd.successMessage,
+        errorMessage: cmd.errorMessage
+      });
       if (argv.gco) {
         return;
       }
@@ -455,7 +498,9 @@ async function RunTest(test, testSuite) {
     try {
       await checkSession();
 
-      await driver.get(cmd.target)
+      let url = require('url').resolve(SELENIUM_TARGET_URL, cmd.target);
+
+      await driver.get(url)
         .then(function () {
           if (cmd.successMessage) {
             console.log(cmd.successMessage);
@@ -470,8 +515,19 @@ async function RunTest(test, testSuite) {
   }
 
   async function _close(cmd) {
+    if (argv.gc || argv.gco) {
+      test.commands.push({
+        command: 'close',
+        target: cmd.target || '',
+        value: cmd.value || '',
+        successMessage: cmd.successMessage,
+        errorMessage: cmd.errorMessage
+      });
+      if (argv.gco) {
+        return;
+      }
+    }
     if (driver) {
-      capturesToPdf(test.data);
       await driver.quit()
         .then(function () {
           if (cmd.successMessage) {
@@ -479,13 +535,19 @@ async function RunTest(test, testSuite) {
           }
         });
       driver = null;
+      capturesToPdf(test.data);
     }
   }
 
   async function _verifyLocation(cmd) {
-    cmd.command = 'verifyLocation';
     if (argv.gc || argv.gco) {
-      test.commands.push(cmd);
+      test.commands.push({
+        command: 'verifyLocation',
+        target: cmd.target || '',
+        value: cmd.value || '',
+        successMessage: cmd.successMessage,
+        errorMessage: cmd.errorMessage
+      });
       if (argv.gco) {
         return;
       }
@@ -507,9 +569,14 @@ async function RunTest(test, testSuite) {
   }
 
   async function _assertLocation(cmd) {
-    cmd.command = 'assertLocation';
     if (argv.gc || argv.gco) {
-      test.commands.push(cmd);
+      test.commands.push({
+        command: 'assertLocation',
+        target: cmd.target || '',
+        value: cmd.value || '',
+        successMessage: cmd.successMessage,
+        errorMessage: cmd.errorMessage
+      });
       if (argv.gco) {
         return;
       }
@@ -533,9 +600,14 @@ async function RunTest(test, testSuite) {
   }
 
   async function _assertNotLocation(cmd) {
-    cmd.command = 'assertNotLocation';
     if (argv.gc || argv.gco) {
-      test.commands.push(cmd);
+      test.commands.push({
+        command: 'assertNotLocation',
+        target: cmd.target || '',
+        value: cmd.value || '',
+        successMessage: cmd.successMessage,
+        errorMessage: cmd.errorMessage
+      });
       if (argv.gco) {
         return;
       }
@@ -559,9 +631,14 @@ async function RunTest(test, testSuite) {
   }
 
   async function _click(cmd) {
-    cmd.command = 'click';
     if (argv.gc || argv.gco) {
-      test.commands.push(cmd);
+      test.commands.push({
+        command: 'click',
+        target: cmd.target || '',
+        value: cmd.value || '',
+        successMessage: cmd.successMessage,
+        errorMessage: cmd.errorMessage
+      });
       if (argv.gco) {
         return;
       }
@@ -591,15 +668,20 @@ async function RunTest(test, testSuite) {
   }
 
   async function _waitForElementPresent(cmd) {
-    cmd.command = 'waitForElementPresent';
     if (argv.gc || argv.gco) {
-      test.commands.push(cmd);
+      test.commands.push({
+        command: 'waitForElementPresent',
+        target: cmd.target || '',
+        value: cmd.value || '',
+        successMessage: cmd.successMessage,
+        errorMessage: cmd.errorMessage
+      });
       if (argv.gco) {
         return;
       }
     }
     try {
-      by = _by(cmd.target);
+      let by = _by(cmd.target);
       await driver.wait(until.elementLocated(by), cmd.value ? Number.parseInt(cmd.value) : SELENIUM_COMMAND_TIMEOUT)
         .then(async function () {
           if (cmd.successMessage) {
@@ -615,15 +697,20 @@ async function RunTest(test, testSuite) {
   }
 
   async function _waitForElementNotPresent(cmd) {
-    cmd.command = 'waitForElementNotPresent';
     if (argv.gc || argv.gco) {
-      test.commands.push(cmd);
+      test.commands.push({
+        command: 'waitForElementNotPresent',
+        target: cmd.target || '',
+        value: cmd.value || '',
+        successMessage: cmd.successMessage,
+        errorMessage: cmd.errorMessage
+      });
       if (argv.gco) {
         return;
       }
     }
     try {
-      by = _by(cmd.target);
+      let by = _by(cmd.target);
       await driver.wait(until.elementIsNotVisible(driver.findElement(by)), cmd.value ? Number.parseInt(cmd.value) : SELENIUM_COMMAND_TIMEOUT)
         .then(async function () {
           if (cmd.successMessage) {
@@ -639,9 +726,14 @@ async function RunTest(test, testSuite) {
   }
 
   async function _waitForCondition(cmd) {
-    cmd.command = 'waitForCondition';
     if (argv.gc || argv.gco) {
-      test.commands.push(cmd);
+      test.commands.push({
+        command: 'waitForCondition',
+        target: cmd.target || '',
+        value: cmd.value || '',
+        successMessage: cmd.successMessage,
+        errorMessage: cmd.errorMessage
+      });
       if (argv.gco) {
         return;
       }
@@ -665,15 +757,20 @@ async function RunTest(test, testSuite) {
 
 
   async function _type(cmd) {
-    cmd.command = 'type';
     if (argv.gc || argv.gco) {
-      test.commands.push(cmd);
+      test.commands.push({
+        command: 'type',
+        target: cmd.target || '',
+        value: cmd.value || '',
+        successMessage: cmd.successMessage,
+        errorMessage: cmd.errorMessage
+      });
       if (argv.gco) {
         return;
       }
     }
     try {
-      by = _by(cmd.target);
+      let by = _by(cmd.target);
       await driver.wait(until.elementLocated(by), SELENIUM_COMMAND_TIMEOUT)
         .then(async function (elm) {
           await elm.click();
@@ -691,9 +788,14 @@ async function RunTest(test, testSuite) {
   }
 
   async function _runScript(cmd) {
-    cmd.command = 'runScript';
     if (argv.gc || argv.gco) {
-      test.commands.push(cmd);
+      test.commands.push({
+        command: 'runScript',
+        target: cmd.target || '',
+        value: cmd.value || '',
+        successMessage: cmd.successMessage,
+        errorMessage: cmd.errorMessage
+      });
       if (argv.gco) {
         return;
       }
@@ -712,9 +814,14 @@ async function RunTest(test, testSuite) {
   }
 
   async function _storeAttribute(cmd) {
-    cmd.command = 'storeAttribute';
     if (argv.gc || argv.gco) {
-      test.commands.push(cmd);
+      test.commands.push({
+        command: 'storeAttribute',
+        target: cmd.target || '',
+        value: cmd.value || '',
+        successMessage: cmd.successMessage,
+        errorMessage: cmd.errorMessage
+      });
       if (argv.gco) {
         return;
       }
@@ -746,9 +853,14 @@ async function RunTest(test, testSuite) {
   }
 
   async function _verifyAttribute(cmd) {
-    cmd.command = 'verifyAttribute';
     if (argv.gc || argv.gco) {
-      test.commands.push(cmd);
+      test.commands.push({
+        command: 'verifyAttribute',
+        target: cmd.target || '',
+        value: cmd.value || '',
+        successMessage: cmd.successMessage,
+        errorMessage: cmd.errorMessage
+      });
       if (argv.gco) {
         return;
       }
@@ -778,9 +890,14 @@ async function RunTest(test, testSuite) {
   }
 
   async function _captureEntirePageScreenshot(cmd) {
-    cmd.command = 'captureEntirePageScreenshot';
     if (argv.gc || argv.gco) {
-      test.commands.push(cmd);
+      test.commands.push({
+        command: 'captureEntirePageScreenshot',
+        target: cmd.target || '',
+        value: cmd.value || '',
+        successMessage: cmd.successMessage,
+        errorMessage: cmd.errorMessage
+      });
       if (argv.gco) {
         return;
       }
@@ -804,9 +921,14 @@ async function RunTest(test, testSuite) {
   }
 
   async function _waitForPageToLoad(cmd) {
-    cmd.command = 'waitForPageToLoad';
     if (argv.gc || argv.gco) {
-      test.commands.push(cmd);
+      test.commands.push({
+        command: 'waitForPageToLoad',
+        target: cmd.target || '',
+        value: cmd.value || '',
+        successMessage: cmd.successMessage,
+        errorMessage: cmd.errorMessage
+      });
       if (argv.gco) {
         return;
       }
@@ -830,9 +952,14 @@ async function RunTest(test, testSuite) {
   }
 
   async function _mouseOver(cmd) {
-    cmd.command = 'mouseOver';
     if (argv.gc || argv.gco) {
-      test.commands.push(cmd);
+      test.commands.push({
+        command: 'mouseOver',
+        target: cmd.target || '',
+        value: cmd.value || '',
+        successMessage: cmd.successMessage,
+        errorMessage: cmd.errorMessage
+      });
       if (argv.gco) {
         return;
       }
@@ -855,9 +982,14 @@ async function RunTest(test, testSuite) {
   }
 
   async function _select(cmd) {
-    cmd.command = 'select';
     if (argv.gc || argv.gco) {
-      test.commands.push(cmd);
+      test.commands.push({
+        command: 'select',
+        target: cmd.target || '',
+        value: cmd.value || '',
+        successMessage: cmd.successMessage,
+        errorMessage: cmd.errorMessage
+      });
       if (argv.gco) {
         return;
       }
@@ -865,9 +997,14 @@ async function RunTest(test, testSuite) {
   }
 
   async function _echo(cmd) {
-    cmd.command = 'echo';
     if (argv.gc || argv.gco) {
-      test.commands.push(cmd);
+      test.commands.push({
+        command: 'echo',
+        target: cmd.target || '',
+        value: cmd.value || '',
+        successMessage: cmd.successMessage,
+        errorMessage: cmd.errorMessage
+      });
       if (argv.gco) {
         return;
       }
@@ -878,8 +1015,23 @@ async function RunTest(test, testSuite) {
   }
 
   async function _setWindowSize(cmd) {
-    cmd.command = 'setWindowSize';
-    driver.Options.windowSize({ width, height });
+    let m = typeof cmd.target === 'string' ? cmd.target.match(/^(\d+)x(\d+)$/) : null;
+    if (m === null) {
+      throw 'Wrong window size format.';
+    }
+    if (argv.gc || argv.gco) {
+      test.commands.push({
+        command: 'setWindowSize',
+        target: cmd.target,
+        value: '',
+        successMessage: cmd.successMessage,
+        errorMessage: cmd.errorMessage
+      });
+      if (argv.gco) {
+        return;
+      }
+    }
+    await driver.manage().window().setRect({ x: 0, y: 0, width: parseInt(m[1]), height: parseInt(m[2]) });
   }
 
   async function setOutboundDate(flightDate, oneWay) {
@@ -996,11 +1148,6 @@ async function RunTest(test, testSuite) {
   }
 
   async function runSearch(driver, data) {
-    let by;
-
-    /**
-     * Flight search
-     */
 
     await _echo({
       command: 'echo',
@@ -1014,18 +1161,6 @@ async function RunTest(test, testSuite) {
 
     if (data.disclaimer && data.disclaimer.confirm) {
 
-      /*
-      await driver.wait(until.urlContains('/booking/continuity-sardinia.html'), SELENIUM_COMMAND_TIMEOUT)
-        .then(function () {
-          console.log('Disclaimer page displayed.');
-        });
-      */
-      /*await _waitForPageToLoad({});
-      await _assertLocation({
-        target: '/booking/continuity-sardinia.html',
-        successMessage: 'Disclaimer page displayed.',
-        errorMessage: 'Disclaimer page not found.'
-      });*/
       await _waitForCondition({
         target: 'return window.location.href.match("/booking/continuity-sardinia.html");',
         successMessage: 'Disclaimer page displayed.',
@@ -1045,31 +1180,11 @@ async function RunTest(test, testSuite) {
       }
     }
 
-    /*
-    await driver.wait(until.urlContains('/booking/flight-select.html'), SELENIUM_COMMAND_TIMEOUT)
-      .then(function () {
-        console.log('Flight selection page displayed.');
-      });
-    */
-    /*
-    await _waitForPageToLoad({});
-    await _assertLocation({
-      target: '/booking/flight-select.html',
-      successMessage: 'Flight selection page displayed.'
-    });
-    */
     await _waitForCondition({
       target: 'return window.location.href.match("/booking/flight-select.html");',
       successMessage: 'Disclaimer page displayed.',
       errorMessage: 'Disclaimer page not found.'
     });
-
-    /*
-    await _waitForElementPresent({
-      target: 'xpath=//*[contains(@class,"waitingPage ") and contains(@style,"display: block")]',
-      successMessage: 'Flight search in progress.'
-    });
-    */
 
     await _waitForElementPresent({
       target: 'xpath=//*[contains(@class,"waitingPage ")]',
@@ -1087,21 +1202,10 @@ async function RunTest(test, testSuite) {
       }
     });
 
-    /*
-    await driver.getCurrentUrl().then(function (currentUrl) {
-      if (currentUrl.match('/booking/no-solutions.html')) {
-        throw "No travel solutions found.";
-      }
-    });
-    */
     await _assertNotLocation({
       target: '/booking/no-solutions.html',
       errorMessage: 'No travel solutions found.'
     });
-
-    /**
-     * Flight search results
-     */
 
     await _waitForElementPresent({
       target: 'xpath=//*[@id="booking-flight-select-selection"]/*[contains(@class,"bookingTable")]',
@@ -1214,15 +1318,7 @@ async function RunTest(test, testSuite) {
     /**
      * Confirm selection
      */
-    /*
-    by = By.xpath('//*[@id="booking-flight-select-selection"]//a[contains(@class,"selectSubmit")]');
-    await driver.wait(until.elementLocated(by), SELENIUM_COMMAND_TIMEOUT)
-      .then(async function (elm) {
-        await driver.executeScript("arguments[0].scrollIntoView()", elm);
-        await driver.executeScript('document.querySelector("#booking-flight-select-selection a.selectSubmit").click();');
-        console.log('Travel data confirmed.');
-      });
-    */
+
     await _mouseOver({
       target: 'xpath=//*[@id="booking-flight-select-selection"]//a[contains(@class,"selectSubmit")]'
     });
@@ -1239,19 +1335,6 @@ async function RunTest(test, testSuite) {
 
     async function fulfillPassengersAndContactsData() {
 
-      /*
-      await driver.wait(until.urlContains('/booking/passengers-data.html'), SELENIUM_COMMAND_TIMEOUT)
-        .then(function () {
-          console.log('Passengers data page displayed.');
-        });
-      */
-      /*
-       await _waitForPageToLoad({});
-       await _assertLocation({
-         target: '/booking/passengers-data.html',
-         successMessage: 'Passengers data page displayed.'
-       });
-      */
       await _waitForCondition({
         target: 'return window.location.href.match("/booking/passengers-data.html");',
         successMessage: 'Passengers data page displayed.',
@@ -1313,11 +1396,35 @@ async function RunTest(test, testSuite) {
           target: `xpath=//form[@id="passengerDataForm"]//input[@id="nomeAdulto_${i + 1}"]`,
           value: `${p.firstName}`
         });
-
         await _type({
           target: `xpath=//form[@id="passengerDataForm"]//input[@id="cognomeAdulto_${i + 1}"]`,
           value: `${p.lastName}`
         });
+
+        if (p.birthDate) {
+
+          let birthDate = new moment(p.birthDate, 'DD/MM/YYYY');
+
+          await _type({
+            target: `xpath=//form[@id="passengerDataForm"]//input[@id="giorno_dataNascitaAdulto_${i + 1}"]`,
+            value: `${birthDate.format('DD')}`
+          });
+          await _type({
+            target: `xpath=//form[@id="passengerDataForm"]//input[@id="mese_dataNascitaAdulto_${i + 1}"]`,
+            value: `${birthDate.format('MM')}`
+          });
+          await _type({
+            target: `xpath=//form[@id="passengerDataForm"]//input[@id="anno_dataNascitaAdulto_${i + 1}"]`,
+            value: `${birthDate.format('YYYY')}`
+          });
+
+        }
+
+        if (p.gender) {
+          await _click({
+            target: `xpath=//form[@id="passengerDataForm"]//select[@id="sessoAdulto_${i + 1}"]/option[@value="${p.gender}"]`
+          });
+        }
 
       }
 
@@ -1329,33 +1436,36 @@ async function RunTest(test, testSuite) {
 
         let p = arrPax[i];
 
-        let birthDate = new moment(p.birthDate, 'DD/MM/YYYY');
-
         await _type({
           target: `xpath=//form[@id="passengerDataForm"]//input[@id="nomeBambino_${i + 1}"]`,
           value: `${p.firstName}`
         });
-
         await _type({
           target: `xpath=//form[@id="passengerDataForm"]//input[@id="cognomeBambino_${i + 1}"]`,
           value: `${p.lastName}`
         });
 
-        await _click({
-          target: `xpath=//form[@id="passengerDataForm"]//select[@id="giorno_dataNascitaBambino_${i + 1}"]/option[@value="${birthDate.format('DD')}"]`
-        });
+        if (p.birthDate) {
 
-        await _click({
-          target: `xpath=//form[@id="passengerDataForm"]//select[@id="mese_dataNascitaBambino_${i + 1}"]/option[@value="${birthDate.format('MM')}"]`
-        });
+          let birthDate = new moment(p.birthDate, 'DD/MM/YYYY');
 
-        await _click({
-          target: `xpath=//form[@id="passengerDataForm"]//select[@id="anno_dataNascitaBambino_${i + 1}"]/option[@value="${birthDate.format('YYYY')}"]`
-        });
+          await _click({
+            target: `xpath=//form[@id="passengerDataForm"]//select[@id="giorno_dataNascitaBambino_${i + 1}"]/option[@value="${birthDate.format('DD')}"]`
+          });
+          await _click({
+            target: `xpath=//form[@id="passengerDataForm"]//select[@id="mese_dataNascitaBambino_${i + 1}"]/option[@value="${birthDate.format('MM')}"]`
+          });
+          await _click({
+            target: `xpath=//form[@id="passengerDataForm"]//select[@id="anno_dataNascitaBambino_${i + 1}"]/option[@value="${birthDate.format('YYYY')}"]`
+          });
+        }
 
-        await _click({
-          target: `xpath=//form[@id="passengerDataForm"]//select[@id="sessoBambino_${i + 1}"]/option[@value="${p.gender}"]`
-        });
+        if (p.gender) {
+          await _click({
+            target: `xpath=//form[@id="passengerDataForm"]//select[@id="sessoBambino_${i + 1}"]/option[@value="${p.gender}"]`
+          });
+        }
+
       }
 
       arrPax = data.passengers.filter(function (p) {
@@ -1366,33 +1476,36 @@ async function RunTest(test, testSuite) {
 
         let p = arrPax[i];
 
-        let birthDate = new moment(p.birthDate, 'DD/MM/YYYY');
-
         await _type({
           target: `xpath=//form[@id="passengerDataForm"]//input[@id="nomeNeonato_${i + 1}"]`,
           value: `${p.firstName}`
         });
-
         await _type({
           target: `xpath=//form[@id="passengerDataForm"]//input[@id="cognomeNeonato_${i + 1}"]`,
           value: `${p.lastName}`
         });
 
-        await _click({
-          target: `xpath=//form[@id="passengerDataForm"]//select[@id="giorno_dataNascitaNeonato_${i + 1}"]/option[@value="${birthDate.format('DD')}"]`
-        });
+        if (p.birthDate) {
 
-        await _click({
-          target: `xpath=//form[@id="passengerDataForm"]//select[@id="mese_dataNascitaNeonato_${i + 1}"]/option[@value="${birthDate.format('MM')}"]`
-        });
+          let birthDate = new moment(p.birthDate, 'DD/MM/YYYY');
 
-        await _click({
-          target: `xpath=//form[@id="passengerDataForm"]//select[@id="anno_dataNascitaNeonato_${i + 1}"]/option[@value="${birthDate.format('YYYY')}"]`
-        });
+          await _click({
+            target: `xpath=//form[@id="passengerDataForm"]//select[@id="giorno_dataNascitaNeonato_${i + 1}"]/option[@value="${birthDate.format('DD')}"]`
+          });
+          await _click({
+            target: `xpath=//form[@id="passengerDataForm"]//select[@id="mese_dataNascitaNeonato_${i + 1}"]/option[@value="${birthDate.format('MM')}"]`
+          });
+          await _click({
+            target: `xpath=//form[@id="passengerDataForm"]//select[@id="anno_dataNascitaNeonato_${i + 1}"]/option[@value="${birthDate.format('YYYY')}"]`
+          });
+        }
 
-        await _click({
-          target: `xpath=//form[@id="passengerDataForm"]//select[@id="sessoNeonato_${i + 1}"]/option[@value="${p.gender}"]`
-        });
+        if (p.gender) {
+          await _click({
+            target: `xpath=//form[@id="passengerDataForm"]//select[@id="sessoNeonato_${i + 1}"]/option[@value="${p.gender}"]`
+          });
+        }
+
       }
     }
 
@@ -1445,19 +1558,6 @@ async function RunTest(test, testSuite) {
 
     async function fulfillAncillaryData() {
 
-      /*
-      await driver.wait(until.urlContains('/booking/ancillary.html'), SELENIUM_COMMAND_TIMEOUT)
-        .then(function () {
-          console.log('Ancillary page displayed');
-        });
-      */
-      /*
-       await _waitForPageToLoad({});
-       await _assertLocation({
-         target: '/booking/ancillary.html',
-         successMessage: 'Ancillary page displayed'
-       });
-       */
       await _waitForCondition({
         target: 'return window.location.href.match("/booking/ancillary.html");',
         successMessage: 'Ancillary page displayed.',
@@ -1480,34 +1580,14 @@ async function RunTest(test, testSuite) {
         successMessage: 'Captured ancillary page.'
       });
 
-      /*
-      by = By.xpath(`//a[@id="ancillaryConfirm"]`);
-      await driver.wait(until.elementLocated(by), SELENIUM_COMMAND_TIMEOUT)
-        .then(async function (elm) {
-          await driver.executeScript("arguments[0].scrollIntoView()", elm);
-          await driver.executeScript('document.querySelector("a#ancillaryConfirm").click();');
-        });
-        */
       await _mouseOver({
         target: 'xpath=//a[@id="ancillaryConfirm"]'
       });
+
       await _runScript({
         target: 'document.querySelector("a#ancillaryConfirm").click();'
       });
 
-      /*
-      await driver.wait(until.urlContains('/booking/payment.html'), SELENIUM_COMMAND_TIMEOUT)
-        .then(function () {
-          console.log('Payment page displayed');
-        });
-      */
-      /*
-       await _waitForPageToLoad({});
-       await _assertLocation({
-         target: '/booking/payment.html',
-         successMessage: 'Payment page displayed.'
-       });
-       */
       await _waitForCondition({
         target: 'return window.location.href.match("/booking/payment.html");',
         successMessage: 'Payment page displayed.',
@@ -1522,13 +1602,6 @@ async function RunTest(test, testSuite) {
         return;
       }
 
-      /*
-      await driver.getCurrentUrl().then(function (currentUrl) {
-        if (typeof currentUrl.match('/booking/payment.html') == 'undefined') {
-          throw "Can not fulfill payment data. Not  payment page.";
-        }
-      });
-      */
       await _assertLocation({
         target: '/booking/payment.html',
         errorMessage: 'Can not fulfill payment data. Not  payment page.'
@@ -1541,8 +1614,23 @@ async function RunTest(test, testSuite) {
 
       if (data.payment.type == "card") {
 
+        await _waitForElementPresent({
+          target: `css=form#booking-acquista-cdc-form input[name="tipologiaCarta"][value="${data.payment.cardIssuer}"] + label`
+        });
+        
         await _click({
-          target: `xpath=//input[@name="tipologiaCarta" and @value="${data.payment.cardIssuer}"]/following-sibling::label`
+          target: `css=form#booking-acquista-cdc-form input[name="tipologiaCarta"][value="${data.payment.cardIssuer}"] + label`
+        });
+        /*
+        await _runScript({
+          target: `document.querySelector('form#booking-acquista-cdc-form input[name="tipologiaCarta"][value="${data.payment.cardIssuer}"] + label').click();` +
+            `var elm = document.querySelector('form#booking-acquista-cdc-form .bookingPaymentForm__groupFieldset fieldset');` +
+            `if (elm.className.indexOf('isActive') === -1) { elm.className = elm.className + ' isActive'; }`
+        });
+        */
+
+        await _waitForElementPresent({
+          target: 'css=form#booking-acquista-cdc-form .bookingPaymentForm__groupFieldset fieldset.isActive'
         });
 
         await _type({
@@ -1584,27 +1672,6 @@ async function RunTest(test, testSuite) {
           target: 'xpath=//a[@id="booking-acquista-cdc-submit"]'
         });
 
-        /* PROVIAMO
-        await _waitForElementPresent({
-          target: 'xpath=//*[contains(@class,"waitingPage ") and contains(@style,"display: block")]',
-          successMessage: 'Flight search loader found.'
-        });
-        */
-
-        /*
-        await driver.wait(until.urlContains('/booking/confirmation.html'), SELENIUM_COMMAND_TIMEOUT)
-          .then(function () {
-            console.log('Booking confirmation page displayed.');
-          });
-        */
-        /*
-         await _waitForPageToLoad({});
-         await _assertLocation({
-           target: '/booking/confirmation.html',
-           successMessage: 'Booking confirmation page displayed.',
-           errorMessage: 'Booking confirmation page not found.'
-         });
-         */
         await _waitForCondition({
           target: 'return window.location.href.match("/booking/confirmation.html");',
           successMessage: 'Booking confirmation page displayed.',
@@ -1614,6 +1681,11 @@ async function RunTest(test, testSuite) {
         await _waitForElementPresent({
           target: 'xpath=//*[@class="thankyoupage"]//*[contains(@class,"afterPayment")]',
           successMessage: 'Booking data displayed.'
+        });
+
+        await _captureEntirePageScreenshot({
+          target: 'thank_you',
+          successMessage: 'Captured thank you page.'
         });
 
       }

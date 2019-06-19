@@ -1,36 +1,24 @@
 {
     "name": "B2C",
     "description": "B2C",
-    "url": "https://www.alitalia.com/it_it",
+    "url": "https://stage.alitalia.com/it_it",
     "tests": [
         {
             "name": "BC-001",
             "description": "DOMESTIC FLIGHT OW",
             "data": {
                 "outbound": {
-                    "date": "15/06/2019",
-                    "departure": {
-                        "city": "",
-                        "airport": "FIUMICINO"
-                    },
-                    "arrival": {
-                        "city": "",
-                        "airport": "CAPODICHINO"
-                    },
-                    "bookingClass": "ECONOMY CLASSIC"
-                },
-                "inbound": {
                     "date": "22/06/2019",
                     "departure": {
                         "city": "",
-                        "airport": "CAPODICHINO"
+                        "airport": "FIUMICINO"
                     },
                     "arrival": {
                         "city": "",
-                        "airport": "FIUMICINO"
+                        "airport": "CAPODICHINO"
                     },
                     "bookingClass": "ECONOMY CLASSIC"
-                },
+                },                
                 "disclaimer": {},
                 "promo": {},
                 "seats": {
@@ -40,8 +28,7 @@
                     {
                         "type": "adult",
                         "firstName": "MARIO",
-                        "lastName": "ROSSI",
-                        "gender": "M"
+                        "lastName": "ROSSI"
                     },
                     {
                         "type": "child",
@@ -73,7 +60,7 @@
                 "consents": [
                     "newsletter"
                 ],
-                "no_payment": {
+                "payment": {
                     "type": "card",
                     "cardIssuer": "Visa",
                     "cardNumber": "4646464646464644",
@@ -91,7 +78,7 @@
             "description": "DOMESTIC FLIGHT RT",
             "data": {
                 "outbound": {
-                    "date": "15/06/2019",
+                    "date": "22/06/2019",
                     "departure": {
                         "city": "",
                         "airport": "FIUMICINO"
@@ -103,7 +90,7 @@
                     "bookingClass": "ECONOMY CLASSIC"
                 },
                 "inbound": {
-                    "date": "22/06/2019",
+                    "date": "29/06/2019",
                     "departure": {
                         "city": "",
                         "airport": "CAPODICHINO"
@@ -123,8 +110,7 @@
                     {
                         "type": "adult",
                         "firstName": "MARIO",
-                        "lastName": "ROSSI",
-                        "gender": "M"
+                        "lastName": "ROSSI"
                     },
                     {
                         "type": "child",
@@ -156,7 +142,7 @@
                 "consents": [
                     "newsletter"
                 ],
-                "no_payment": {
+                "payment": {
                     "type": "card",
                     "cardIssuer": "Visa",
                     "cardNumber": "4646464646464644",
@@ -174,7 +160,7 @@
             "description": "INZ LIGHT FLIGHT OW",
             "data": {
                 "outbound": {
-                    "date": "15/06/2019",
+                    "date": "29/06/2019",
                     "departure": {
                         "city": "",
                         "airport": "FIUMICINO"
@@ -220,7 +206,7 @@
                 "consents": [
                     "newsletter"
                 ],
-                "no_payment": {
+                "payment": {
                     "type": "card",
                     "cardIssuer": "Visa",
                     "cardNumber": "4646464646464644",
@@ -296,7 +282,7 @@
                 "consents": [
                     "newsletter"
                 ],
-                "no_payment": {
+                "payment": {
                     "type": "card",
                     "cardIssuer": "Visa",
                     "cardNumber": "4646464646464644",
@@ -347,7 +333,8 @@
                         "type": "adult",
                         "firstName": "MARIO",
                         "lastName": "ROSSI",
-                        "gender": "M"
+                        "gender": "M",
+                        "birthDate":"05/11/1970"
                     },
                     {
                         "type": "child",
@@ -379,7 +366,7 @@
                 "consents": [
                     "newsletter"
                 ],
-                "no_payment": {
+                "payment": {
                     "type": "card",
                     "cardIssuer": "Visa",
                     "cardNumber": "4646464646464644",
@@ -450,7 +437,7 @@
                 "consents": [
                     "newsletter"
                 ],
-                "no_payment": {
+                "payment": {
                     "type": "card",
                     "cardIssuer": "Visa",
                     "cardNumber": "4646464646464644",
@@ -523,7 +510,7 @@
                 "consents": [
                     "newsletter"
                 ],
-                "no_payment": {
+                "payment": {
                     "type": "card",
                     "cardIssuer": "Visa",
                     "cardNumber": "4646464646464644",
@@ -596,7 +583,7 @@
                 "consents": [
                     "newsletter"
                 ],
-                "no_payment": {
+                "payment": {
                     "type": "card",
                     "cardIssuer": "Visa",
                     "cardNumber": "4646464646464644",
@@ -669,7 +656,7 @@
                 "consents": [
                     "newsletter"
                 ],
-                "no_payment": {
+                "payment": {
                     "type": "card",
                     "cardIssuer": "Visa",
                     "cardNumber": "4646464646464644",
@@ -742,7 +729,7 @@
                 "consents": [
                     "newsletter"
                 ],
-                "no_payment": {
+                "payment": {
                     "type": "card",
                     "cardIssuer": "Visa",
                     "cardNumber": "4646464646464644",
@@ -815,7 +802,7 @@
                 "consents": [
                     "newsletter"
                 ],
-                "no_payment": {
+                "payment": {
                     "type": "card",
                     "cardIssuer": "Visa",
                     "cardNumber": "4646464646464644",
@@ -888,7 +875,7 @@
                 "consents": [
                     "newsletter"
                 ],
-                "no_payment": {
+                "payment": {
                     "type": "card",
                     "cardIssuer": "Visa",
                     "cardNumber": "4646464646464644",
@@ -959,7 +946,7 @@
                 "consents": [
                     "newsletter"
                 ],
-                "no_payment": {
+                "payment": {
                     "type": "card",
                     "cardIssuer": "Visa",
                     "cardNumber": "4646464646464644",
