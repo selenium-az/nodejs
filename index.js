@@ -18,7 +18,7 @@ const argv = require('yargs')
   .describe('gc', 'Generates JSON file of "Selenium" commands.')
   .boolean('gco')
   .default('gco', false)
-  .alias('gco', 'generate-commands')
+  .alias('gco', 'generate-commands-only')
   .describe('gco', 'Generates JSON file of "Selenium" commands but does not execute them.')
   .boolean('cs')
   .default('cs', true)
@@ -52,9 +52,9 @@ _mkdirSync(`./browser_captures/${process.env.SELENIUM_BROWSER}`);
     return;
   }
 
-  let test_selected = test_suite;
+  let test_selected = test_suite.tests;
   if (argv.st) {
-    test_selected = test_suite.tests.filter(function (t) {
+    test_selected = test_selected.filter(function (t) {
       return `\\s*${t.name}\\s*`.match(argv.st) !== null;
     });
     if (test_selected.length === 0) {
