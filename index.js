@@ -1,4 +1,5 @@
 const { Builder, By, logging, until, Actions } = require('selenium-webdriver');
+const { getOtp } = require('./otp-helper');
 const PDFDocument = require('pdfkit');
 const fs = require('fs');
 const moment = require('moment');
@@ -35,7 +36,9 @@ const SELENIUM_LOG_LEVEL = process.env.SELENIUM_LOG_LEVEL === 'DEBUG' ? logging.
 
 var SELENIUM_TARGET_URL = process.env.SELENIUM_TARGET_URL;
 
-var SELENIUM_WINDOW_SIZE = typeof process.env.SELENIUM_WINDOW_SIZE === 'string' ? process.env.SELENIUM_WINDOW_SIZE : '1280x1024';
+var SELENIUM_WINDOW_SIZE = typeof process.env.SELENIUM_WINDOW_SIZE === 'string' ? process.env.SELENIUM_WINDOW_SIZE : '1024x768';
+
+var SELENIUM_SESSION_VARS = {};
 
 logging.installConsoleHandler();
 logging.getLogger('webdriver.http').setLevel(SELENIUM_LOG_LEVEL);
@@ -100,6 +103,9 @@ async function RunTest(test, testSuite) {
 
   let suiteStart = testSuite.start;
 
+  let cmdStart = null;
+  let cmdComplete = null;
+
   if (test.commands && test.commands.length > 0) {
     await runTestCommands(test);
     return;
@@ -112,7 +118,6 @@ async function RunTest(test, testSuite) {
   try {
 
     await _echo({
-      command: 'echo',
       target: `Starting '${test.name}' test ...`
     });
 
@@ -160,6 +165,17 @@ async function RunTest(test, testSuite) {
         fs.writeFileSync(captureFile, image, 'base64');
       }
     );
+  }
+
+  function notifyCommandStart(cmd) {
+    cmdStart = moment.utc().format('YYYY-MM-DD HH:mm:ss');
+    if (cmd && cmd.command === 'click') {
+      console.log(`[${cmdStart}] ${cmd.target}`)
+    }
+  }
+
+  function notifyCommandComplete(cmd) {
+    cmdComplete = moment.utc().format('YYYY-MM-DD HH:mm:ss');
   }
 
   function capturesToPdf(data) {
@@ -254,7 +270,6 @@ async function RunTest(test, testSuite) {
     });
 
     await _echo({
-      command: 'echo',
       target: 'Wait for booking flight widget ...'
     });
 
@@ -279,7 +294,6 @@ async function RunTest(test, testSuite) {
      */
 
     await _echo({
-      command: 'echo',
       target: 'Selecting travel type ...'
     });
 
@@ -342,14 +356,14 @@ async function RunTest(test, testSuite) {
         value: `${clickCount}`
       });
       */
-     await _runScript({
-      target: `var elm = document.getElementById("addAdults"); for (var i = 0; i < ${clickCount}; i++) { elm.click(); };`
-    });
+      await _runScript({
+        target: `var elm = document.getElementById("addAdults"); for (var i = 0; i < ${clickCount}; i++) { elm.click(); };`
+      });
     }
 
     clickCount = passengers.filter(function (p) {
       return p.type == "child";
-    }).length;    
+    }).length;
 
     if (clickCount > 0) {
       /*
@@ -367,7 +381,7 @@ async function RunTest(test, testSuite) {
       return p.type == "infant";
     }).length;
 
-    if (clickCount > 0) {      
+    if (clickCount > 0) {
       /*
       await _click({
         target: 'xpath=//*[@id="addBabies"]',
@@ -409,6 +423,9 @@ async function RunTest(test, testSuite) {
         case 'open':
           await _open(cur_cmd);
           break;
+        case 'otp':
+          await _otp(cur_cmd);
+          break;
         case 'runScript':
           await _runScript(cur_cmd);
           break;
@@ -418,8 +435,14 @@ async function RunTest(test, testSuite) {
         case 'setWindowSize':
           await _setWindowSize(cur_cmd);
           break;
+        case 'store':
+          await _store(cur_cmd);
+          break;
         case 'storeAttribute':
           await _storeAttribute(cur_cmd);
+          break;
+        case 'storeText':
+          await _storeText(cur_cmd);
           break;
         case 'type':
           await _type(cur_cmd);
@@ -484,6 +507,7 @@ async function RunTest(test, testSuite) {
   async function _open(cmd) {
     if (argv.gc || argv.gco) {
       test.commands.push({
+        id: _uuid(),
         command: 'open',
         target: cmd.target || '',
         value: cmd.value || '',
@@ -494,7 +518,7 @@ async function RunTest(test, testSuite) {
         return;
       }
     }
-
+    notifyCommandStart();
     try {
       await checkSession();
 
@@ -505,6 +529,76 @@ async function RunTest(test, testSuite) {
           if (cmd.successMessage) {
             console.log(cmd.successMessage);
           }
+          notifyCommandComplete();
+        });
+    } catch (error) {
+      if (cmd.errorMessage) {
+        console.log(cmd.errorMessage);
+      }
+      throw error;
+    }
+  }
+
+  async function _store(cmd) {
+    if (argv.gc || argv.gco) {
+      test.commands.push({
+        id: _uuid(),
+        command: 'store',
+        target: cmd.target || '',
+        value: cmd.value || '',
+        successMessage: cmd.successMessage,
+        errorMessage: cmd.errorMessage
+      });
+      if (argv.gco) {
+        return;
+      }
+    }
+    notifyCommandStart();
+    try {
+      if (cmd.value.match(/^[_a-z][_a-z0-9]*$/i) == null) {
+        throw `Store variable "${cmd.value}" is not valid.`;
+      }
+      SELENIUM_SESSION_VARS[cmd.value] = cmd.target;
+      if (cmd.successMessage) {
+        console.log(cmd.successMessage);
+      }
+      notifyCommandComplete();
+    } catch (error) {
+      if (cmd.errorMessage) {
+        console.log(cmd.errorMessage);
+      }
+      throw error;
+    }
+  }
+
+  async function _storeText(cmd) {
+    if (argv.gc || argv.gco) {
+      test.commands.push({
+        id: _uuid(),
+        command: 'storeText',
+        target: cmd.target || '',
+        value: cmd.value || '',
+        successMessage: cmd.successMessage,
+        errorMessage: cmd.errorMessage
+      });
+      if (argv.gco) {
+        return;
+      }
+    }
+    notifyCommandStart();
+    try {
+      if (cmd.value.match(/^[_a-z][_a-z0-9]*$/i) == null) {
+        throw `Store variable "${cmd.value}" is not valid.`;
+      }
+      by = _by(cmd.target);
+      await driver.wait(until.elementLocated(by), SELENIUM_COMMAND_TIMEOUT)
+        .then(async function (elm) {
+          let elmText = await driver.executeScript(`return arguments[0].innerText;`, elm);
+          SELENIUM_SESSION_VARS[cmd.value] = elmText;
+          if (cmd.successMessage) {
+            console.log(cmd.successMessage);
+          }
+          notifyCommandComplete();
         });
     } catch (error) {
       if (cmd.errorMessage) {
@@ -517,6 +611,7 @@ async function RunTest(test, testSuite) {
   async function _close(cmd) {
     if (argv.gc || argv.gco) {
       test.commands.push({
+        id: _uuid(),
         command: 'close',
         target: cmd.target || '',
         value: cmd.value || '',
@@ -527,6 +622,7 @@ async function RunTest(test, testSuite) {
         return;
       }
     }
+    notifyCommandStart();
     if (driver) {
       await driver.quit()
         .then(function () {
@@ -542,6 +638,7 @@ async function RunTest(test, testSuite) {
   async function _verifyLocation(cmd) {
     if (argv.gc || argv.gco) {
       test.commands.push({
+        id: _uuid(),
         command: 'verifyLocation',
         target: cmd.target || '',
         value: cmd.value || '',
@@ -552,6 +649,7 @@ async function RunTest(test, testSuite) {
         return;
       }
     }
+    notifyCommandStart();
     try {
       let u = await driver.getCurrentUrl();
       let m = u.match(cmd.target);
@@ -559,6 +657,7 @@ async function RunTest(test, testSuite) {
         if (cmd.successMessage) {
           console.log(cmd.successMessage);
         }
+        notifyCommandComplete();
       }
     } catch (error) {
       if (cmd.errorMessage) {
@@ -571,6 +670,7 @@ async function RunTest(test, testSuite) {
   async function _assertLocation(cmd) {
     if (argv.gc || argv.gco) {
       test.commands.push({
+        id: _uuid(),
         command: 'assertLocation',
         target: cmd.target || '',
         value: cmd.value || '',
@@ -581,6 +681,7 @@ async function RunTest(test, testSuite) {
         return;
       }
     }
+    notifyCommandStart();
     try {
       let u = await driver.getCurrentUrl();
       let m = u.match(cmd.target);
@@ -588,6 +689,7 @@ async function RunTest(test, testSuite) {
         if (cmd.successMessage) {
           console.log(cmd.successMessage);
         }
+        notifyCommandComplete();
       } else {
         throw `Current URL does not match "${cmd.target}".`;
       }
@@ -602,6 +704,7 @@ async function RunTest(test, testSuite) {
   async function _assertNotLocation(cmd) {
     if (argv.gc || argv.gco) {
       test.commands.push({
+        id: _uuid(),
         command: 'assertNotLocation',
         target: cmd.target || '',
         value: cmd.value || '',
@@ -612,6 +715,7 @@ async function RunTest(test, testSuite) {
         return;
       }
     }
+    notifyCommandStart();
     try {
       let u = await driver.getCurrentUrl();
       let m = u.match(cmd.target);
@@ -621,6 +725,7 @@ async function RunTest(test, testSuite) {
         if (cmd.successMessage) {
           console.log(cmd.successMessage);
         }
+        notifyCommandComplete();
       }
     } catch (error) {
       if (cmd.errorMessage) {
@@ -633,6 +738,7 @@ async function RunTest(test, testSuite) {
   async function _click(cmd) {
     if (argv.gc || argv.gco) {
       test.commands.push({
+        id: _uuid(),
         command: 'click',
         target: cmd.target || '',
         value: cmd.value || '',
@@ -643,6 +749,7 @@ async function RunTest(test, testSuite) {
         return;
       }
     }
+    notifyCommandStart(cmd);
     try {
       by = _by(cmd.target);
       await driver.wait(until.elementLocated(by), SELENIUM_COMMAND_TIMEOUT)
@@ -658,6 +765,7 @@ async function RunTest(test, testSuite) {
           if (cmd.successMessage) {
             console.log(cmd.successMessage);
           }
+          notifyCommandComplete();
         });
     } catch (error) {
       if (cmd.errorMessage) {
@@ -670,6 +778,7 @@ async function RunTest(test, testSuite) {
   async function _waitForElementPresent(cmd) {
     if (argv.gc || argv.gco) {
       test.commands.push({
+        id: _uuid(),
         command: 'waitForElementPresent',
         target: cmd.target || '',
         value: cmd.value || '',
@@ -680,6 +789,7 @@ async function RunTest(test, testSuite) {
         return;
       }
     }
+    notifyCommandStart();
     try {
       let by = _by(cmd.target);
       await driver.wait(until.elementLocated(by), cmd.value ? Number.parseInt(cmd.value) : SELENIUM_COMMAND_TIMEOUT)
@@ -687,6 +797,7 @@ async function RunTest(test, testSuite) {
           if (cmd.successMessage) {
             console.log(cmd.successMessage);
           }
+          notifyCommandComplete();
         });
     } catch (error) {
       if (cmd.errorMessage) {
@@ -699,6 +810,7 @@ async function RunTest(test, testSuite) {
   async function _waitForElementNotPresent(cmd) {
     if (argv.gc || argv.gco) {
       test.commands.push({
+        id: _uuid(),
         command: 'waitForElementNotPresent',
         target: cmd.target || '',
         value: cmd.value || '',
@@ -709,6 +821,7 @@ async function RunTest(test, testSuite) {
         return;
       }
     }
+    notifyCommandStart();
     try {
       let by = _by(cmd.target);
       await driver.wait(until.elementIsNotVisible(driver.findElement(by)), cmd.value ? Number.parseInt(cmd.value) : SELENIUM_COMMAND_TIMEOUT)
@@ -716,6 +829,7 @@ async function RunTest(test, testSuite) {
           if (cmd.successMessage) {
             console.log(cmd.successMessage);
           }
+          notifyCommandComplete();
         });
     } catch (error) {
       if (cmd.errorMessage) {
@@ -728,6 +842,7 @@ async function RunTest(test, testSuite) {
   async function _waitForCondition(cmd) {
     if (argv.gc || argv.gco) {
       test.commands.push({
+        id: _uuid(),
         command: 'waitForCondition',
         target: cmd.target || '',
         value: cmd.value || '',
@@ -738,6 +853,7 @@ async function RunTest(test, testSuite) {
         return;
       }
     }
+    notifyCommandStart();
     try {
       await driver.wait(async function () {
         return await driver.executeScript(cmd.target);
@@ -746,6 +862,7 @@ async function RunTest(test, testSuite) {
           if (cmd.successMessage) {
             console.log(cmd.successMessage);
           }
+          notifyCommandComplete();
         });
     } catch (error) {
       if (cmd.errorMessage) {
@@ -755,10 +872,69 @@ async function RunTest(test, testSuite) {
     }
   }
 
+  async function _otp(cmd) {
+    if (argv.gc || argv.gco) {
+      test.commands.push({
+        id: _uuid(),
+        command: 'otp',
+        target: cmd.target || '',
+        value: cmd.value || '',
+        successMessage: cmd.successMessage,
+        errorMessage: cmd.errorMessage
+      });
+      if (argv.gco) {
+        return;
+      }
+    }
+    let otp = '';
+    let otpTime = moment.utc(cmdStart).subtract(1, 'seconds').format('YYYY-MM-DD HH:mm:ss');
+    notifyCommandStart();
+    try {
+      let m = cmd.value.match(/^(mobile|email)=(.+)$/)
+      if (m && m.length == 3) {
+        let mobile = m[1] === 'mobile' ? m[2] : null;
+        let email = m[1] === 'email' ? m[2] : null;
+        let waitLimit = 10 * 1000;
+        let waitInterval = 1000;
+        do {
+          await sleep(waitInterval).then(() => {
+            getOtp(otpTime, mobile, email).then(
+              function (value) {
+                otp = value;
+                waitLimit -= waitInterval;
+              },
+              function (reason) {
+                throw `ERROR: ${reason}`;
+              }
+            );
+          });
+        } while (otp === '' && waitLimit > 0);
+        if (otp === '') throw 'ERROR: can not retrieve OTP.';
+        let by = _by(cmd.target);
+        await driver.wait(until.elementLocated(by), SELENIUM_COMMAND_TIMEOUT)
+          .then(async function (elm) {
+            await elm.click();
+            await elm.sendKeys(otp);
+            if (cmd.successMessage) {
+              console.log(cmd.successMessage);
+            }
+            notifyCommandComplete();
+          });
+      } else {
+        throw `ERROR: command value format is not valid.`;
+      }
+    } catch (error) {
+      if (cmd.errorMessage) {
+        console.log(cmd.errorMessage);
+      }
+      throw error;
+    }
+  }
 
   async function _type(cmd) {
     if (argv.gc || argv.gco) {
       test.commands.push({
+        id: _uuid(),
         command: 'type',
         target: cmd.target || '',
         value: cmd.value || '',
@@ -769,15 +945,22 @@ async function RunTest(test, testSuite) {
         return;
       }
     }
+    notifyCommandStart();
     try {
       let by = _by(cmd.target);
       await driver.wait(until.elementLocated(by), SELENIUM_COMMAND_TIMEOUT)
         .then(async function (elm) {
+          let value = cmd.value || '';
+          let m = value.match(/^\$\{([_a-z][_a-z0-9]*)\}$/);
+          if (m) {
+            value = SELENIUM_SESSION_VARS[m[1]];
+          }
           await elm.click();
-          await elm.sendKeys(cmd.value);
+          await elm.sendKeys(value);
           if (cmd.successMessage) {
             console.log(cmd.successMessage);
           }
+          notifyCommandComplete();
         });
     } catch (error) {
       if (cmd.errorMessage) {
@@ -790,6 +973,7 @@ async function RunTest(test, testSuite) {
   async function _runScript(cmd) {
     if (argv.gc || argv.gco) {
       test.commands.push({
+        id: _uuid(),
         command: 'runScript',
         target: cmd.target || '',
         value: cmd.value || '',
@@ -800,11 +984,13 @@ async function RunTest(test, testSuite) {
         return;
       }
     }
+    notifyCommandStart();
     try {
       await driver.executeScript(cmd.target);
       if (cmd.successMessage) {
         console.log(cmd.successMessage);
       }
+      notifyCommandComplete();
     } catch (error) {
       if (cmd.errorMessage) {
         console.log(cmd.errorMessage);
@@ -816,6 +1002,7 @@ async function RunTest(test, testSuite) {
   async function _storeAttribute(cmd) {
     if (argv.gc || argv.gco) {
       test.commands.push({
+        id: _uuid(),
         command: 'storeAttribute',
         target: cmd.target || '',
         value: cmd.value || '',
@@ -826,6 +1013,7 @@ async function RunTest(test, testSuite) {
         return;
       }
     }
+    notifyCommandStart();
     try {
       let lastAt = cmd.target.lastIndexOf('@');
       if (lastAt == -1) {
@@ -843,6 +1031,7 @@ async function RunTest(test, testSuite) {
           if (cmd.successMessage) {
             console.log(cmd.successMessage);
           }
+          notifyCommandComplete();
         });
     } catch (error) {
       if (cmd.errorMessage) {
@@ -855,6 +1044,7 @@ async function RunTest(test, testSuite) {
   async function _verifyAttribute(cmd) {
     if (argv.gc || argv.gco) {
       test.commands.push({
+        id: _uuid(),
         command: 'verifyAttribute',
         target: cmd.target || '',
         value: cmd.value || '',
@@ -865,6 +1055,7 @@ async function RunTest(test, testSuite) {
         return;
       }
     }
+    notifyCommandStart();
     try {
       let lastAt = cmd.target.lastIndexOf('@');
       if (lastAt == -1) {
@@ -879,6 +1070,7 @@ async function RunTest(test, testSuite) {
           if (cmd.successMessage) {
             console.log(cmd.successMessage);
           }
+          notifyCommandComplete();
         });
       return attrValue;
     } catch (error) {
@@ -892,6 +1084,7 @@ async function RunTest(test, testSuite) {
   async function _captureEntirePageScreenshot(cmd) {
     if (argv.gc || argv.gco) {
       test.commands.push({
+        id: _uuid(),
         command: 'captureEntirePageScreenshot',
         target: cmd.target || '',
         value: cmd.value || '',
@@ -905,12 +1098,14 @@ async function RunTest(test, testSuite) {
     if (argv.cs === false) {
       return;
     }
+    notifyCommandStart();
     try {
       await capturePage(cmd.target)
         .then(function () {
           if (cmd.successMessage) {
             console.log(cmd.successMessage);
           }
+          notifyCommandComplete();
         });
     } catch (error) {
       if (cmd.errorMessage) {
@@ -923,6 +1118,7 @@ async function RunTest(test, testSuite) {
   async function _waitForPageToLoad(cmd) {
     if (argv.gc || argv.gco) {
       test.commands.push({
+        id: _uuid(),
         command: 'waitForPageToLoad',
         target: cmd.target || '',
         value: cmd.value || '',
@@ -933,6 +1129,7 @@ async function RunTest(test, testSuite) {
         return;
       }
     }
+    notifyCommandStart();
     try {
       await driver.wait(async function () {
         let readyState = await driver.executeScript('return document.readyState === \'complete\';');
@@ -942,6 +1139,7 @@ async function RunTest(test, testSuite) {
           if (cmd.successMessage) {
             console.log(cmd.successMessage);
           }
+          notifyCommandComplete();
         });
     } catch (error) {
       if (cmd.errorMessage) {
@@ -954,6 +1152,7 @@ async function RunTest(test, testSuite) {
   async function _mouseOver(cmd) {
     if (argv.gc || argv.gco) {
       test.commands.push({
+        id: _uuid(),
         command: 'mouseOver',
         target: cmd.target || '',
         value: cmd.value || '',
@@ -964,6 +1163,7 @@ async function RunTest(test, testSuite) {
         return;
       }
     }
+    notifyCommandStart();
     try {
       by = _by(cmd.target);
       await driver.wait(until.elementLocated(by), SELENIUM_COMMAND_TIMEOUT)
@@ -972,6 +1172,7 @@ async function RunTest(test, testSuite) {
           if (cmd.successMessage) {
             console.log(cmd.successMessage);
           }
+          notifyCommandComplete();
         });
     } catch (error) {
       if (cmd.errorMessage) {
@@ -984,6 +1185,7 @@ async function RunTest(test, testSuite) {
   async function _select(cmd) {
     if (argv.gc || argv.gco) {
       test.commands.push({
+        id: _uuid(),
         command: 'select',
         target: cmd.target || '',
         value: cmd.value || '',
@@ -999,6 +1201,7 @@ async function RunTest(test, testSuite) {
   async function _echo(cmd) {
     if (argv.gc || argv.gco) {
       test.commands.push({
+        id: _uuid(),
         command: 'echo',
         target: cmd.target || '',
         value: cmd.value || '',
@@ -1021,6 +1224,7 @@ async function RunTest(test, testSuite) {
     }
     if (argv.gc || argv.gco) {
       test.commands.push({
+        id: _uuid(),
         command: 'setWindowSize',
         target: cmd.target,
         value: '',
@@ -1031,7 +1235,9 @@ async function RunTest(test, testSuite) {
         return;
       }
     }
+    notifyCommandStart();
     await driver.manage().window().setRect({ x: 0, y: 0, width: parseInt(m[1]), height: parseInt(m[2]) });
+    notifyCommandComplete();
   }
 
   async function setOutboundDate(flightDate, oneWay) {
@@ -1042,7 +1248,6 @@ async function RunTest(test, testSuite) {
     });
 
     await _echo({
-      command: 'echo',
       target: 'Typed in outbound date. Wait for calendar ...'
     });
 
@@ -1150,7 +1355,6 @@ async function RunTest(test, testSuite) {
   async function runSearch(driver, data) {
 
     await _echo({
-      command: 'echo',
       target: 'Search travel solutions ...'
     });
 
@@ -1617,7 +1821,7 @@ async function RunTest(test, testSuite) {
         await _waitForElementPresent({
           target: `css=form#booking-acquista-cdc-form input[name="tipologiaCarta"][value="${data.payment.cardIssuer}"] + label`
         });
-        
+
         await _click({
           target: `css=form#booking-acquista-cdc-form input[name="tipologiaCarta"][value="${data.payment.cardIssuer}"] + label`
         });
@@ -1683,6 +1887,10 @@ async function RunTest(test, testSuite) {
           successMessage: 'Booking data displayed.'
         });
 
+        await _storeText({
+          target: 'document.querySelector(".thankyoupage .afterPayment h1 span").innerText'
+        });
+
         await _captureEntirePageScreenshot({
           target: 'thank_you',
           successMessage: 'Captured thank you page.'
@@ -1695,6 +1903,10 @@ async function RunTest(test, testSuite) {
 
 }
 
+async function sleep(time) {
+  return new Promise((resolve) => setTimeout(resolve, time));
+}
+
 function _mkdirSync(dirPath) {
   try {
     fs.statSync(dirPath);
@@ -1703,4 +1915,8 @@ function _mkdirSync(dirPath) {
       fs.mkdirSync(dirPath);
     }
   }
+}
+
+function _uuid() {
+  return require('uuid/v1')();
 }

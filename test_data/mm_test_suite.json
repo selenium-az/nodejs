@@ -1,0 +1,904 @@
+{
+    "name": "mm-test-suite",
+    "description": "MilleMiglia Test Suite",
+    "url": "https://stage.alitalia.com",
+    "tests": [
+        {
+            "name": "mm-registration",
+            "description": "MilleMiglia Registration",
+            "data1": {
+                "name": "CASIMIRO LEO IV",
+                "surname": "MIROSICA",
+                "birthDate": "01/01/2000",
+                "gender": "M",
+                "username": "casimiroleo2019",
+                "password": "Casimiroleo#2019",
+                "email": "casimiroleo2019@mailinator.com"
+            },
+            "commands": [
+                {
+                    "id": "559a6640-9bec-11e9-890d-9f3473a67018",
+                    "command": "open",
+                    "target": "/it_it/special-pages/subscribe_mm_program.html",
+                    "value": ""
+                },
+                {
+                    "id": "70a3a230-9bec-11e9-8603-d7ca4c3de264",
+                    "command": "click",
+                    "target": "id=nome",
+                    "value": ""
+                },
+                {
+                    "id": "76f0a3e0-9bec-11e9-9651-e78c627abd6c",
+                    "command": "type",
+                    "target": "id=nome",
+                    "value": "CASIMIRO LEO IV"
+                },
+                {
+                    "id": "7f64f260-9bec-11e9-9db3-7bbe65de7045",
+                    "command": "click",
+                    "target": "id=surname",
+                    "value": ""
+                },
+                {
+                    "id": "866b0ae0-9bec-11e9-b1d9-87abd5ed5f4a",
+                    "command": "type",
+                    "target": "id=surname",
+                    "value": "MIROSICA"
+                },
+                {
+                    "id": "8d6cdda0-9bec-11e9-aee5-55b5cb3c833a",
+                    "command": "click",
+                    "target": "xpath=//select[@id=\"day\"]/option[.=\"1\"]",
+                    "value": ""
+                },
+                {
+                    "id": "96914240-9bec-11e9-bf56-1533e280a363",
+                    "command": "click",
+                    "target": "xpath=//select[@id=\"month\"]/option[.=\"1\"]",
+                    "value": ""
+                },
+                {
+                    "id": "9d65ea80-9bec-11e9-bd34-5b32b1256abb",
+                    "command": "click",
+                    "target": "xpath=//select[@id=\"year\"]/option[.=\"2000\"]",
+                    "value": ""
+                },
+                {
+                    "id": "a7809600-9bec-11e9-a21c-6dbf27171f29",
+                    "command": "click",
+                    "target": "css=#genderM + label",
+                    "value": ""
+                },
+                {
+                    "id": "af61f350-9bec-11e9-bf10-875cfeb49074",
+                    "command": "click",
+                    "target": "xpath=//select[@id=\"profession\"]/option[.=\"Giornalista\"]",
+                    "value": ""
+                },
+                {
+                    "id": "b6c1eba0-9bec-11e9-847b-a744229e6daf",
+                    "command": "click",
+                    "target": "css=.formPage__sectionCover:nth-child(7) .millemiglia__formBlock:nth-child(3)",
+                    "value": ""
+                },
+                {
+                    "id": "bece5090-9bec-11e9-8b80-41989bca675e",
+                    "command": "click",
+                    "target": "id=address",
+                    "value": ""
+                },
+                {
+                    "id": "c5ab5d40-9bec-11e9-9271-df29bda1a051",
+                    "command": "type",
+                    "target": "id=address",
+                    "value": "VIA ROMA"
+                },
+                {
+                    "id": "ced03710-9bec-11e9-b376-0331e4db5815",
+                    "command": "click",
+                    "target": "id=cap",
+                    "value": ""
+                },
+                {
+                    "id": "e6bddb20-9bec-11e9-83ab-035d56b1fb64",
+                    "command": "type",
+                    "target": "id=cap",
+                    "value": "00100"
+                },
+                {
+                    "id": "f17aba10-9bec-11e9-b678-bf69bc08bb92",
+                    "command": "click",
+                    "target": "id=city",
+                    "value": ""
+                },
+                {
+                    "id": "f974f690-9bec-11e9-8435-c7066c110b5e",
+                    "command": "type",
+                    "target": "id=city",
+                    "value": "ROMA"
+                },
+                {
+                    "id": "0ed957b0-9bed-11e9-a1bf-fb4876bc614a",
+                    "command": "click",
+                    "target": "xpath=//select[@id=\"nation\"]/option[.=\"Italia\"]",
+                    "value": ""
+                },
+                {
+                    "id": "16aece20-9bed-11e9-b613-adb795974367",
+                    "command": "click",
+                    "target": "xpath=//select[@id=\"province\"]/option[.=\"Roma\"]",
+                    "value": ""
+                },
+                {
+                    "id": "1ddfee40-9bed-11e9-ac24-1fc4c1ef4efe",
+                    "command": "click",
+                    "target": "id=input_username",
+                    "value": ""
+                },
+                {
+                    "id": "25874fd0-9bed-11e9-92ba-89ff1ce24298",
+                    "command": "type",
+                    "target": "id=input_username",
+                    "value": "casimiroleo2019"
+                },
+                {
+                    "id": "2db5e2c0-9bed-11e9-87f6-13a7633b92bc",
+                    "command": "click",
+                    "target": "id=input_password",
+                    "value": ""
+                },
+                {
+                    "id": "353e71b0-9bed-11e9-a215-57d6e28746f0",
+                    "command": "type",
+                    "target": "id=input_password",
+                    "value": "Casimiroleo#2019"
+                },
+                {
+                    "id": "3c00a360-9bed-11e9-938b-793923ac38fe",
+                    "command": "click",
+                    "target": "id=input_confpassword",
+                    "value": ""
+                },
+                {
+                    "id": "480851d0-9bed-11e9-9838-2b2494848fd8",
+                    "command": "type",
+                    "target": "id=input_confpassword",
+                    "value": "Casimiroleo#2019"
+                },
+                {
+                    "id": "4e816c90-9bed-11e9-96ca-45b584b99244",
+                    "command": "click",
+                    "target": "id=input_email",
+                    "value": ""
+                },
+                {
+                    "id": "54fc8320-9bed-11e9-822d-c13c893e5887",
+                    "command": "type",
+                    "target": "id=input_email",
+                    "value": "casimiroleo2019@mailinator.com"
+                },
+                {
+                    "id": "5c3432f0-9bed-11e9-877e-451de1755917",
+                    "command": "click",
+                    "target": "xpath=//select[@id=\"typedelivery\"]/option[.=\"Cellulare Personale\"]",
+                    "value": ""
+                },
+                {
+                    "id": "62d87c60-9bed-11e9-ab19-53ea6d803bcc",
+                    "command": "click",
+                    "target": "xpath=//select[@id=\"nationalPrefix\"]/option[.=\"Italia (+39) \"]",
+                    "value": ""
+                },
+                {
+                    "id": "69573c70-9bed-11e9-961f-83a2a11f66e6",
+                    "command": "click",
+                    "target": "id=number",
+                    "value": ""
+                },
+                {
+                    "id": "70a6ba00-9bed-11e9-ac12-59780c826ef4",
+                    "command": "type",
+                    "target": "id=number",
+                    "value": "3313364746"
+                },
+                {
+                    "id": "7874b660-9bed-11e9-9b9d-11952bab884a",
+                    "command": "click",
+                    "target": "xpath=//select[@id=\"phonePrefix\"]/option[.=\"Italia (+39) \"]",
+                    "value": ""
+                },
+                {
+                    "id": "7e9e2a80-9bed-11e9-81ec-dde2c84bfeb7",
+                    "command": "click",
+                    "target": "id=input_newdelivery",
+                    "value": ""
+                },
+                {
+                    "id": "865ac1c0-9bed-11e9-a50c-bd762e7cc0fb",
+                    "command": "type",
+                    "target": "id=input_newdelivery",
+                    "value": "3313364746"
+                },
+                {
+                    "id": "8e24c680-9bed-11e9-8649-6b8a18b2409c",
+                    "command": "click",
+                    "target": "id=registratiSubmit",
+                    "value": ""
+                },
+                {
+                    "id": "95adf1b0-9bed-11e9-9cfb-8d925fe529b1",
+                    "command": "otp",
+                    "target": "xpath=//*[@id=\"modal_otp_sms\" and contains(@style,\"display: block\")]//input[@id=\"input_insertCode_OTP\"]",
+                    "value": "mobile=00393313364746"
+                },
+                {
+                    "id": "9eda6ca0-9bed-11e9-9919-2d50ba4997b3",
+                    "command": "click",
+                    "target": "css=.insertCodeSMS_OTP",
+                    "value": ""
+                },
+                {
+                    "id": "a5758e50-9bed-11e9-98e4-7365af30e1f4",
+                    "command": "otp",
+                    "target": "xpath=//*[@id=\"modal_otp_sms\" and contains(@style,\"display: block\")]//input[@id=\"input_insertCode_OTP\"]",
+                    "value": "email=casimiroleo2019@mailinator.com"
+                },
+                {
+                    "id": "ac43f500-9bed-11e9-9741-7fbfa3a77a62",
+                    "command": "click",
+                    "target": "css=.insertCodeSMS_OTP",
+                    "value": ""
+                },
+                {
+                    "id": "b3020800-9bed-11e9-a125-13a7aeac33cb",
+                    "command": "waitForElementPresent",
+                    "target": "xpath=//*[@id=\"stepRegistration2\" and not(contains(@style,\"display: none;\"))]"
+                },
+                {
+                    "id": "b9831200-9bed-11e9-9828-194f07f3d419",
+                    "command": "click",
+                    "target": "css=.millemiglia__formBlock--threeCol:nth-child(3) .form__element:nth-child(1) label",
+                    "value": ""
+                },
+                {
+                    "id": "c087a3e0-9bed-11e9-bf25-9100d73d957f",
+                    "command": "click",
+                    "target": "css=.millemiglia__formBlock--threeCol:nth-child(4) .form__element:nth-child(1) label",
+                    "value": ""
+                },
+                {
+                    "id": "c8f8be10-9bed-11e9-b5de-bd2ede400734",
+                    "command": "click",
+                    "target": "name=method",
+                    "value": ""
+                },
+                {
+                    "id": "d286b9f0-9bed-11e9-8bb0-1b73abf44ad1",
+                    "command": "click",
+                    "target": "css=.form__inputCover:nth-child(1) > .radioButton:nth-child(1) > label",
+                    "value": ""
+                },
+                {
+                    "id": "db5d25a0-9bed-11e9-8fe8-c114c505f1b5",
+                    "command": "click",
+                    "target": "xpath=//select[@id=\"posto\"]/option[.=\"finestrino\"]",
+                    "value": ""
+                },
+                {
+                    "id": "e33449c0-9bed-11e9-803c-c7e49b175763",
+                    "command": "click",
+                    "target": "xpath=//select[@id=\"pasto\"]/option[.=\"Standard\"]",
+                    "value": ""
+                },
+                {
+                    "id": "e9851c00-9bed-11e9-9a47-e35b454ca41e",
+                    "command": "click",
+                    "target": "css=#stepRegistration2 form fieldset:nth-child(10) .checkbox label",
+                    "value": ""
+                },
+                {
+                    "id": "f1660420-9bed-11e9-aa24-fb51905c1d86",
+                    "command": "click",
+                    "target": "id=completaSubmit",
+                    "value": ""
+                }
+            ]
+        },
+        {
+            "name": "mm-check-registration-email",
+            "description": "MilleMiglia Check Registration E-mail",
+            "data": {},
+            "commands": [
+                {
+                    "id": "f93d2840-9bed-11e9-a1d0-f34c5dfb77ec",
+                    "command": "open",
+                    "target": "https://www.mailinator.com/v3/index.jsp?zone=public&query=casimiroleo2019#/#inboxpane",
+                    "value": ""
+                },
+                {
+                    "id": "074317b0-9bee-11e9-8b32-87c682c1f744",
+                    "command": "click",
+                    "target": "//*[@id=\"inboxpane\"]//table/tbody/tr[1]/td[3]"
+                }
+            ]
+        },
+        {
+            "name": "mm-login",
+            "description": "MilleMiglia Login",
+            "commands": [
+                {
+                    "id": "290138b4-73d8-4f02-b4e5-c2c850fc8321",
+                    "command": "open",
+                    "target": "/it_it/",
+                    "value": ""
+                },
+                {
+                    "id": "e5616d34-c637-4966-8a67-b5b87ab3a9a8",
+                    "command": "setWindowSize",
+                    "target": "1280x1024",
+                    "value": ""
+                },
+                {
+                    "id": "ffae8d95-d4b8-4dce-bfae-a6ca4f0c7c1f",
+                    "command": "runScript",
+                    "target": "document.querySelector(\".cookie-bar a.closeCookie\").click();",
+                    "value": ""
+                },
+                {
+                    "id": "255b6001-8c37-45d1-8196-47363b4ba9d6",
+                    "command": "click",
+                    "target": "css=.user-area:nth-child(2) .label",
+                    "value": ""
+                },
+                {
+                    "id": "6b98e162-2e38-41d0-ace9-3df4067cdbca",
+                    "command": "click",
+                    "target": "id=openSaLogin",
+                    "value": ""
+                },
+                {
+                    "id": "e99953a8-6519-4e1c-9f9f-0369ca1bde9a",
+                    "command": "type",
+                    "target": "id=millemiglia-sa",
+                    "value": "casimiroleo2003"
+                },
+                {
+                    "id": "539cbf95-e505-48a0-8812-53164c4e8bbc",
+                    "command": "type",
+                    "target": "id=password",
+                    "value": "Casimiroleo#2003"
+                },
+                {
+                    "id": "91d1866e-a820-436e-8a19-ba1b8343f8f2",
+                    "command": "captureEntirePageScreenshot",
+                    "target": "",
+                    "value": ""
+                },
+                {
+                    "id": "93b80d3f-fc3b-42b1-8ad9-f1a217125575",
+                    "command": "click",
+                    "target": "id=login-submit-sa",
+                    "value": ""
+                },
+                {
+                    "id": "630a5cd1-3f18-402a-91b7-cfa284978c1c",
+                    "command": "waitForElementNotPresent",
+                    "target": "css=#header .navigation .menu .user-area .login-included-if-anonymous",
+                    "value": ""
+                },
+                {
+                    "id": "3e393f8e-8ff1-4e7c-bdbf-02453cb3ad04",
+                    "command": "mouseOver",
+                    "target": "css=.menu .user-area .user-logged a:nth-child(2)",
+                    "value": ""
+                },
+                {
+                    "id": "628c7d70-e0b2-4e55-bda2-c05f9db59492",
+                    "command": "click",
+                    "target": "css=.user-menu ul.menu li:nth-child(7) a",
+                    "value": ""
+                },
+                {
+                    "id": "91d1866e-a820-436e-8a19-ba1b8343f8f2",
+                    "command": "captureEntirePageScreenshot",
+                    "target": "",
+                    "value": ""
+                },
+                {
+                    "id": "778c76ca-10fa-481d-a462-a36f8a106dc2",
+                    "command": "close",
+                    "target": "",
+                    "value": ""
+                }
+            ]
+        },
+        {
+            "name": "mm-update-credentials",
+            "description": "MilleMiglia Update Credentials",
+            "commands": [
+                {
+                    "id": "290138b4-73d8-4f02-b4e5-c2c850fc8321",
+                    "command": "open",
+                    "target": "/it_it/",
+                    "value": ""
+                },
+                {
+                    "id": "e5616d34-c637-4966-8a67-b5b87ab3a9a8",
+                    "command": "setWindowSize",
+                    "target": "1280x1024",
+                    "value": ""
+                },
+                {
+                    "id": "255b6001-8c37-45d1-8196-47363b4ba9d6",
+                    "command": "click",
+                    "target": "css=.user-area:nth-child(2) .label",
+                    "value": ""
+                },
+                {
+                    "id": "6b98e162-2e38-41d0-ace9-3df4067cdbca",
+                    "command": "click",
+                    "target": "id=openSaLogin",
+                    "value": ""
+                },
+                {
+                    "id": "",
+                    "command": "click",
+                    "target": "xpath=//*[@id=\"buttonnewcrede\"]//a",
+                    "value": ""
+                }
+            ]
+        },
+        {
+            "name": "mm-retrieve-pin",
+            "description": "MilleMiglia Retrieve PIN",
+            "commands": [
+                {
+                    "command": "store",
+                    "target": "7826901",
+                    "value": "mm_code"
+                },
+                {
+                    "command": "store",
+                    "target": "MIROSICA",
+                    "value": "mm_surname"
+                },
+                {
+                    "id": "290138b4-73d8-4f02-b4e5-c2c850fc8321",
+                    "command": "open",
+                    "target": "/it_it/",
+                    "value": ""
+                },
+                {
+                    "id": "e5616d34-c637-4966-8a67-b5b87ab3a9a8",
+                    "command": "setWindowSize",
+                    "target": "1280x1024",
+                    "value": ""
+                },
+                {
+                    "id": "255b6001-8c37-45d1-8196-47363b4ba9d6",
+                    "command": "click",
+                    "target": "css=.user-area:nth-child(2) .label",
+                    "value": ""
+                },
+                {
+                    "id": "6b98e162-2e38-41d0-ace9-3df4067cdbca",
+                    "command": "click",
+                    "target": "id=openSaLogin",
+                    "value": ""
+                },
+                {
+                    "id": "b3ab7120-9c1e-11e9-9215-af144817847f",
+                    "command": "click",
+                    "target": "xpath=//*[@id=\"buttonnewcrede\"]//a",
+                    "value": ""
+                },
+                {
+                    "id": "bb615c30-9c1f-11e9-b8e8-7deafc56f1ca",
+                    "command": "click",
+                    "target": "xpath=//div[@id=\"login\"]//a[contains(@href,\"/special-pages/recupera-pin.html\")]",
+                    "value": ""
+                },
+                {
+                    "id": "1b0b6950-9c20-11e9-b48f-cfe07b8ea8ea",
+                    "command": "waitForCondition",
+                    "target": "return window.location.href.indexOf(\"/special-pages/recupera-pin.html\") !== -1;",
+                    "value": ""
+                },
+                {
+                    "id": "a8a2aa30-9c20-11e9-95ac-97f7aa5f843a",
+                    "command": "type",
+                    "target": "css=form#form-recupera-pin input#mmcode",
+                    "value": "${mm_code}"
+                },
+                {
+                    "id": "d278a800-9c20-11e9-bb50-698af8c76528",
+                    "command": "type",
+                    "target": "css=form#form-recupera-pin input#surname",
+                    "value": "${mm_surname}"
+                },
+                {
+                    "id": "25f11080-9c21-11e9-b600-bdccd80ea9f3",
+                    "command": "click",
+                    "target": "css=form#form-recupera-pin input#recuperapinSubmit",
+                    "value": ""
+                },
+                {
+                    "id": "d6a19bc0-9c21-11e9-a4a1-bdae27add4aa",
+                    "command": "waitForCondition",
+                    "target": "return window.location.search.indexOf(\"/success=true\") !== -1;",
+                    "value": ""
+                },
+                {
+                    "id": "6b527d20-9c22-11e9-811e-bfdb9ee026a1",
+                    "command": "click",
+                    "target": "css=div#backtohomebutton a",
+                    "value": ""
+                }
+            ]
+        },
+        {
+            "name": "mm-retrieve-username",
+            "description": "MilleMiglia Retrieve Username",
+            "commands": [
+                {
+                    "command": "store",
+                    "target": "7826901",
+                    "value": "mm_code"
+                },
+                {
+                    "command": "store",
+                    "target": "MIROSICA",
+                    "value": "mm_surname"
+                },
+                {
+                    "command": "store",
+                    "target": "00393313364746",
+                    "value": "mm_mobile"
+                },
+                {
+                    "id": "290138b4-73d8-4f02-b4e5-c2c850fc8321",
+                    "command": "open",
+                    "target": "/it_it/",
+                    "value": ""
+                },
+                {
+                    "id": "e5616d34-c637-4966-8a67-b5b87ab3a9a8",
+                    "command": "setWindowSize",
+                    "target": "1280x1024",
+                    "value": ""
+                },
+                {
+                    "id": "13831460-9c13-11e9-9ecc-3bb0b2e0dea2",
+                    "command": "captureEntirePageScreenshot",
+                    "target": "",
+                    "value": ""
+                },
+                {
+                    "id": "255b6001-8c37-45d1-8196-47363b4ba9d6",
+                    "command": "click",
+                    "target": "css=.user-area:nth-child(2) .label",
+                    "value": ""
+                },
+                {
+                    "id": "0df5e040-9c13-11e9-8c93-03f32729c2dd",
+                    "command": "captureEntirePageScreenshot",
+                    "target": "",
+                    "value": ""
+                },
+                {
+                    "id": "6b98e162-2e38-41d0-ace9-3df4067cdbca",
+                    "command": "click",
+                    "target": "id=openSaLogin",
+                    "value": ""
+                },
+                {
+                    "id": "05724f80-9c13-11e9-b7e8-4f02dbcedc71",
+                    "command": "captureEntirePageScreenshot",
+                    "target": "",
+                    "value": ""
+                },
+                {
+                    "id": "edbccd10-9bff-11e9-b8bc-c1706ba1d33e",
+                    "command": "click",
+                    "target": "xpath=//a[contains(@href,\"/special-pages/recovery_mm_crd.html\")]",
+                    "value": ""
+                },
+                {
+                    "id": "456925d0-9c01-11e9-b347-a92e47e9f9d7",
+                    "command": "waitForCondition",
+                    "target": "return window.location.href.indexOf(\"/special-pages/recovery_mm_crd.html\") !== -1;",
+                    "value": ""
+                },
+                {
+                    "id": "fb28cbd0-9c12-11e9-b89d-031e1b25f294",
+                    "command": "captureEntirePageScreenshot",
+                    "target": "",
+                    "value": ""
+                },
+                {
+                    "id": "f76df670-9c01-11e9-9413-79887f8f7209",
+                    "command": "click",
+                    "target": "xpath=//a[.=\"Recupera Username\"]"
+                },
+                {
+                    "id": "f8116cf0-9c02-11e9-a4c2-c7f342ee412b",
+                    "command": "type",
+                    "target": "css=form#form-millemiglia-recupera-credenziali input#codiceMillemiglia",
+                    "value": "${mm_code}"
+                },
+                {
+                    "id": "149477a0-9c03-11e9-ae21-8f3e61afa8c7",
+                    "command": "type",
+                    "target": "css=form#form-millemiglia-recupera-credenziali input#surname",
+                    "value": "${mm_surname}"
+                },
+                {
+                    "id": "f3345bb0-9c12-11e9-9e0c-c1897971c528",
+                    "command": "captureEntirePageScreenshot",
+                    "target": "",
+                    "value": ""
+                },
+                {
+                    "id": "ed6adfb0-9c03-11e9-87e1-b1e468424fec",
+                    "command": "click",
+                    "target": "css=form#form-millemiglia-recupera-credenziali input#RecuperoCredenzialiSubmit",
+                    "value": ""
+                },
+                {
+                    "id": "58eacaf0-9c06-11e9-8f23-475386de864c",
+                    "command": "otp",
+                    "target": "xpath=//*[@id=\"modal_otp_sms\" and contains(@style,\"display: block\")]//input[@id=\"input_insertCode_OTP\"]",
+                    "value": "mobile=00393313364746"
+                },
+                {
+                    "id": "eba14570-9c12-11e9-a888-3dafc2b1c813",
+                    "command": "captureEntirePageScreenshot",
+                    "target": "",
+                    "value": ""
+                },
+                {
+                    "id": "ac43f500-9bed-11e9-9741-7fbfa3a77a62",
+                    "command": "click",
+                    "target": "css=.insertCodeSMS_OTP",
+                    "value": ""
+                },
+                {
+                    "id": "372788c0-9c08-11e9-9fe3-5587ea619de8",
+                    "command": "waitForElementPresent",
+                    "target": "css=form#form-millemiglia-recupera-credenziali fieldset .form__element .form__label span",
+                    "value": ""
+                },
+                {
+                    "id": "511cf5a0-9c06-11e9-bcff-b53824a8cc81",
+                    "command": "storeText",
+                    "target": "css=form#form-millemiglia-recupera-credenziali fieldset .form__element .form__label span",
+                    "value": "mm_username"
+                },
+                {
+                    "id": "e3440160-9c12-11e9-aaf4-5348d87e53c0",
+                    "command": "captureEntirePageScreenshot",
+                    "target": "",
+                    "value": ""
+                },
+                {
+                    "id": "4aaa4380-9c06-11e9-8f6d-65dffe31c850",
+                    "command": "click",
+                    "target": "css=form#form-millemiglia-recupera-credenziali input#RecuperoCredenzialiSubmit",
+                    "value": ""
+                },
+                {
+                    "id": "453440e0-9c06-11e9-9d33-0f8c5001f3aa",
+                    "command": "waitForCondition",
+                    "target": "return window.location.href.indexOf(\"/homepage.html\") !== -1;",
+                    "value": ""
+                },
+                {
+                    "id": "d84844b0-9c12-11e9-be0d-7fabf7786ee3",
+                    "command": "captureEntirePageScreenshot",
+                    "target": "",
+                    "value": ""
+                },
+                {
+                    "id": "524dc190-9c13-11e9-8c57-0937ef953d33",
+                    "command": "close",
+                    "target": "",
+                    "value": ""
+                }
+            ]
+        },
+        {
+            "name": "mm-reset-password",
+            "description": "MilleMiglia Reset Password",
+            "commands": [
+                {
+                    "command": "store",
+                    "target": "7826901",
+                    "value": "mm_code"
+                },
+                {
+                    "command": "store",
+                    "target": "MIROSICA",
+                    "value": "mm_surname"
+                },
+                {
+                    "command": "store",
+                    "target": "Casimiroleo#2003",
+                    "value": "mm_password"
+                },
+                {
+                    "command": "store",
+                    "target": "00393313364746",
+                    "value": "mm_mobile"
+                },
+                {
+                    "id": "290138b4-73d8-4f02-b4e5-c2c850fc8321",
+                    "command": "open",
+                    "target": "/it_it/",
+                    "value": ""
+                },
+                {
+                    "id": "e5616d34-c637-4966-8a67-b5b87ab3a9a8",
+                    "command": "setWindowSize",
+                    "target": "1280x1024",
+                    "value": ""
+                },
+                {
+                    "id": "13831460-9c13-11e9-9ecc-3bb0b2e0dea2",
+                    "command": "captureEntirePageScreenshot",
+                    "target": "",
+                    "value": ""
+                },
+                {
+                    "id": "255b6001-8c37-45d1-8196-47363b4ba9d6",
+                    "command": "click",
+                    "target": "css=.user-area:nth-child(2) .label",
+                    "value": ""
+                },
+                {
+                    "id": "0df5e040-9c13-11e9-8c93-03f32729c2dd",
+                    "command": "captureEntirePageScreenshot",
+                    "target": "",
+                    "value": ""
+                },
+                {
+                    "id": "6b98e162-2e38-41d0-ace9-3df4067cdbca",
+                    "command": "click",
+                    "target": "id=openSaLogin",
+                    "value": ""
+                },
+                {
+                    "id": "05724f80-9c13-11e9-b7e8-4f02dbcedc71",
+                    "command": "captureEntirePageScreenshot",
+                    "target": "",
+                    "value": ""
+                },
+                {
+                    "id": "edbccd10-9bff-11e9-b8bc-c1706ba1d33e",
+                    "command": "click",
+                    "target": "xpath=//a[contains(@href,\"/special-pages/recovery_mm_crd.html\")]",
+                    "value": ""
+                },
+                {
+                    "id": "456925d0-9c01-11e9-b347-a92e47e9f9d7",
+                    "command": "waitForCondition",
+                    "target": "return window.location.href.indexOf(\"/special-pages/recovery_mm_crd.html\") !== -1;",
+                    "value": ""
+                },
+                {
+                    "id": "fb28cbd0-9c12-11e9-b89d-031e1b25f294",
+                    "command": "captureEntirePageScreenshot",
+                    "target": "",
+                    "value": ""
+                },
+                {
+                    "id": "f76df670-9c01-11e9-9413-79887f8f7209",
+                    "command": "click",
+                    "target": "xpath=//a[contains(.,\"Password\")]"
+                },
+                {
+                    "id": "f8116cf0-9c02-11e9-a4c2-c7f342ee412b",
+                    "command": "type",
+                    "target": "css=form#form-millemiglia-recupera-credenziali input#codiceMillemiglia",
+                    "value": "${mm_code}"
+                },
+                {
+                    "id": "149477a0-9c03-11e9-ae21-8f3e61afa8c7",
+                    "command": "type",
+                    "target": "css=form#form-millemiglia-recupera-credenziali input#surname",
+                    "value": "${mm_surname}"
+                },
+                {
+                    "id": "f3345bb0-9c12-11e9-9e0c-c1897971c528",
+                    "command": "captureEntirePageScreenshot",
+                    "target": "",
+                    "value": ""
+                },
+                {
+                    "id": "ed6adfb0-9c03-11e9-87e1-b1e468424fec",
+                    "command": "click",
+                    "target": "css=form#form-millemiglia-recupera-credenziali input#RecuperoCredenzialiSubmit",
+                    "value": ""
+                },
+                {
+                    "id": "f34bd920-9c03-11e9-b1d0-932732363d74",
+                    "command": "type",
+                    "target": "css=form#form-millemiglia-recupera-credenziali input#password",
+                    "value": "${mm_password}"
+                },
+                {
+                    "id": "f9aa18e0-9c03-11e9-aa80-3740fc88addb",
+                    "command": "type",
+                    "target": "css=form#form-millemiglia-recupera-credenziali input#confermaPassword",
+                    "value": "${mm_password}"
+                },
+                {
+                    "id": "a1ed1c50-9c18-11e9-a0dd-194e0ec10181",
+                    "command": "click",
+                    "target": "css=form#form-millemiglia-recupera-credenziali input#RecuperoCredenzialiSubmit",
+                    "value": ""
+                },
+                {
+                    "id": "58eacaf0-9c06-11e9-8f23-475386de864c",
+                    "command": "otp",
+                    "target": "xpath=//*[@id=\"modal_otp_sms\" and contains(@style,\"display: block\")]//input[@id=\"input_insertCode_OTP\"]",
+                    "value": "mobile=00393313364746"
+                },
+                {
+                    "id": "eba14570-9c12-11e9-a888-3dafc2b1c813",
+                    "command": "captureEntirePageScreenshot",
+                    "target": "",
+                    "value": ""
+                },
+                {
+                    "id": "ac43f500-9bed-11e9-9741-7fbfa3a77a62",
+                    "command": "click",
+                    "target": "css=.insertCodeSMS_OTP",
+                    "value": ""
+                },
+                {
+                    "id": "372788c0-9c08-11e9-9fe3-5587ea619de8",
+                    "command": "waitForElementPresent",
+                    "target": "css=form#form-millemiglia-recupera-credenziali fieldset .form__label p.emailTo",
+                    "value": ""
+                },
+                {
+                    "id": "511cf5a0-9c06-11e9-bcff-b53824a8cc81",
+                    "command": "storeText",
+                    "target": "css=form#form-millemiglia-recupera-credenziali fieldset .form__label p.emailTo",
+                    "value": "mm_email"
+                },
+                {
+                    "id": "e3440160-9c12-11e9-aaf4-5348d87e53c0",
+                    "command": "captureEntirePageScreenshot",
+                    "target": "",
+                    "value": ""
+                },
+                {
+                    "id": "4aaa4380-9c06-11e9-8f6d-65dffe31c850",
+                    "command": "click",
+                    "target": "css=form#form-millemiglia-recupera-credenziali input#RecuperoCredenzialiSubmit",
+                    "value": ""
+                },
+                {
+                    "id": "453440e0-9c06-11e9-9d33-0f8c5001f3aa",
+                    "command": "waitForCondition",
+                    "target": "return window.location.href.indexOf(\"/homepage.html\") !== -1;",
+                    "value": ""
+                },
+                {
+                    "id": "d84844b0-9c12-11e9-be0d-7fabf7786ee3",
+                    "command": "captureEntirePageScreenshot",
+                    "target": "",
+                    "value": ""
+                },
+                {
+                    "id": "524dc190-9c13-11e9-8c57-0937ef953d33",
+                    "command": "close",
+                    "target": "",
+                    "value": ""
+                }
+            ]
+        }
+    ]
+}

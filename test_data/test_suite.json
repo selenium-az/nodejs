@@ -18,7 +18,7 @@
                         "airport": "CAPODICHINO"
                     },
                     "bookingClass": "ECONOMY CLASSIC"
-                },                
+                },
                 "disclaimer": {},
                 "promo": {},
                 "seats": {
@@ -35,14 +35,14 @@
                         "firstName": "CARLA",
                         "lastName": "ROSSI",
                         "gender": "F",
-                        "birthDate":"12/07/2010"
+                        "birthDate": "12/07/2010"
                     },
                     {
                         "type": "infant",
                         "firstName": "GIOVANNA",
                         "lastName": "ROSSI",
                         "gender": "F",
-                        "birthDate":"20/02/2018"
+                        "birthDate": "20/02/2018"
                     }
                 ],
                 "contacts": [
@@ -117,14 +117,14 @@
                         "firstName": "CARLA",
                         "lastName": "ROSSI",
                         "gender": "F",
-                        "birthDate":"12/07/2010"
+                        "birthDate": "12/07/2010"
                     },
                     {
                         "type": "infant",
                         "firstName": "GIOVANNA",
                         "lastName": "ROSSI",
                         "gender": "F",
-                        "birthDate":"20/02/2018"
+                        "birthDate": "20/02/2018"
                     }
                 ],
                 "contacts": [
@@ -188,7 +188,7 @@
                         "firstName": "CARLA",
                         "lastName": "ROSSI",
                         "gender": "F",
-                        "birthDate":"12/07/2010"
+                        "birthDate": "12/07/2010"
                     }
                 ],
                 "contacts": [
@@ -258,13 +258,13 @@
                         "firstName": "MARIO",
                         "lastName": "ROSSI",
                         "gender": "M"
-                    },                    
+                    },
                     {
                         "type": "infant",
                         "firstName": "GIOVANNA",
                         "lastName": "ROSSI",
                         "gender": "F",
-                        "birthDate":"20/02/2018"
+                        "birthDate": "20/02/2018"
                     }
                 ],
                 "contacts": [
@@ -334,21 +334,21 @@
                         "firstName": "MARIO",
                         "lastName": "ROSSI",
                         "gender": "M",
-                        "birthDate":"05/11/1970"
+                        "birthDate": "05/11/1970"
                     },
                     {
                         "type": "child",
                         "firstName": "CARLA",
                         "lastName": "ROSSI",
                         "gender": "F",
-                        "birthDate":"12/07/2010"
+                        "birthDate": "12/07/2010"
                     },
                     {
                         "type": "infant",
                         "firstName": "GIOVANNA",
                         "lastName": "ROSSI",
                         "gender": "F",
-                        "birthDate":"20/02/2018"
+                        "birthDate": "20/02/2018"
                     }
                 ],
                 "contacts": [
