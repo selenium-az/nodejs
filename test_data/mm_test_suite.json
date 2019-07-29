@@ -348,7 +348,7 @@
                 {
                     "id": "255b6001-8c37-45d1-8196-47363b4ba9d6",
                     "command": "click",
-                    "target": "css=.user-area:nth-child(2) .label",
+                    "target": "css=.navigation .menu-togglable > .menu > .user-area a.user-login",
                     "value": ""
                 },
                 {
@@ -430,9 +430,15 @@
                     "value": ""
                 },
                 {
+                    "id": "ffae8d95-d4b8-4dce-bfae-a6ca4f0c7c1f",
+                    "command": "runScript",
+                    "target": "document.querySelector(\".cookie-bar a.closeCookie\").click();",
+                    "value": ""
+                },
+                {
                     "id": "255b6001-8c37-45d1-8196-47363b4ba9d6",
                     "command": "click",
-                    "target": "css=.user-area:nth-child(2) .label",
+                    "target": "css=.navigation .menu-togglable > .menu > .user-area a.user-login",
                     "value": ""
                 },
                 {
@@ -442,9 +448,9 @@
                     "value": ""
                 },
                 {
-                    "id": "",
+                    "id": "88364c50-a721-11e9-9849-cd55d3195101",
                     "command": "click",
-                    "target": "xpath=//*[@id=\"buttonnewcrede\"]//a",
+                    "target": "xpath=//*[@id=\"buttonnewcrede\"]//a/button",
                     "value": ""
                 }
             ]
@@ -476,9 +482,15 @@
                     "value": ""
                 },
                 {
+                    "id": "ffae8d95-d4b8-4dce-bfae-a6ca4f0c7c1f",
+                    "command": "runScript",
+                    "target": "document.querySelector(\".cookie-bar a.closeCookie\").click();",
+                    "value": ""
+                },
+                {
                     "id": "255b6001-8c37-45d1-8196-47363b4ba9d6",
                     "command": "click",
-                    "target": "css=.user-area:nth-child(2) .label",
+                    "target": "css=.navigation .menu-togglable > .menu > .user-area a.user-login",
                     "value": ""
                 },
                 {
@@ -490,7 +502,7 @@
                 {
                     "id": "b3ab7120-9c1e-11e9-9215-af144817847f",
                     "command": "click",
-                    "target": "xpath=//*[@id=\"buttonnewcrede\"]//a",
+                    "target": "xpath=//*[@id=\"buttonnewcrede\"]//a/button",
                     "value": ""
                 },
                 {

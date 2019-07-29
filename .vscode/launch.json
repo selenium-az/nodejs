@@ -8,18 +8,21 @@
             "type": "node",
             "request": "launch",
             "name": "Alitalia Test Automation",
-            "program": "${workspaceFolder}\\index.js",
+            "program": "${workspaceFolder}/index.js",
             "env": {
-                "DEFAULT_SELENIUM_TARGET_URL_1": "https://stage.alitalia.com",
+                "SELENIUM_TARGET_URL": "https://stage.alitalia.com",
                 "SELENIUM_BROWSER": "firefox",
-                "SELENIUM_HEADLESS": "true",
-                "SELENIUM_BROWSER_PROFILE_PATH": "${workspaceFolder}\\browser_profiles\\firefox\\alitalia.selenium",
+                "SELENIUM_HEADLESS": "false",
+                "SELENIUM_BROWSER_PROFILE_PATH": "${workspaceFolder}/browser_profiles/firefox/alitalia.selenium",
                 "SELENIUM_BROWSER_USER_AGENT": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:66.0) Gecko/20100101 Firefox/66.0",
                 "SELENIUM_FIREFOX_USER_AGENT": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:66.0) Gecko/20100101 Firefox/66.0",
                 "SELENIUM_CHROME_USER_AGENT": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/74.0.3729.157 Safari/537.36",
-                "SELENIUM_TEST_DATA": "${workspaceFolder}\\test_data\\test_suite.json"
+                "SELENIUM_TEST_DATA": "${workspaceFolder}/test_data/mm_test_suite.json"
             },
-            "args": []
+            "args": [
+                "--st",
+                "mm-retrieve-pin"
+            ]
         }
     ]
 }
