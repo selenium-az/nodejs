@@ -1027,7 +1027,7 @@ async function RunTest(test, testSuite) {
       await driver.wait(until.elementLocated(by), SELENIUM_COMMAND_TIMEOUT)
         .then(async function (elm) {
           let attrValue = await driver.executeScript(`return arguments[0].getAttribute("${attrName}");`, elm);
-          this[cmd.value] = attrValue;
+          SELENIUM_SESSION_VARS[cmd.value] = attrValue;
           if (cmd.successMessage) {
             console.log(cmd.successMessage);
           }
