@@ -34,11 +34,14 @@ const SELENIUM_COMMAND_TIMEOUT = (process.env.SELENIUM_COMMAND_TIMEOUT ? int.par
 
 const SELENIUM_LOG_LEVEL = process.env.SELENIUM_LOG_LEVEL === 'DEBUG' ? logging.Level.ALL : logging.Level.INFO;
 
+var SELENIUM_TEST_DATA = typeof process.env.SELENIUM_TEST_DATA === 'string' ? process.env.SELENIUM_TEST_DATA : './test_data/test_suite.json';
+
 var SELENIUM_TARGET_URL = process.env.SELENIUM_TARGET_URL;
 
-var SELENIUM_WINDOW_SIZE = typeof process.env.SELENIUM_WINDOW_SIZE === 'string' ? process.env.SELENIUM_WINDOW_SIZE : '1024x768';
+var SELENIUM_WINDOW_SIZE = typeof process.env.SELENIUM_WINDOW_SIZE === 'string' ? process.env.SELENIUM_WINDOW_SIZE : '1280x720';
 
 var SELENIUM_SESSION_VARS = {};
+var SELENIUM_TEST_VARS = {};
 
 logging.installConsoleHandler();
 logging.getLogger('webdriver.http').setLevel(SELENIUM_LOG_LEVEL);
@@ -48,7 +51,7 @@ _mkdirSync(`./browser_captures/${process.env.SELENIUM_BROWSER}`);
 
 (async function RunTestSuite() {
 
-  let test_suite = JSON.parse(fs.readFileSync(process.env.SELENIUM_TEST_DATA, 'utf8'));
+  let test_suite = JSON.parse(fs.readFileSync(SELENIUM_TEST_DATA, 'utf8'));
 
   if (test_suite.tests === undefined || test_suite.tests.length === 0) {
     console.log('Unable to run tests. Test suite is empty!');
@@ -75,8 +78,11 @@ _mkdirSync(`./browser_captures/${process.env.SELENIUM_BROWSER}`);
 
   test_suite.start = moment();
 
+  await writeTestSuiteResultsHeader(test_suite);
+
   for (let i = 0; i < test_selected.length; i++) {
     await RunTest(test_selected[i], test_suite);
+    await writeTestResults(test_selected[i], test_suite);
   }
 
   if (argv.gc || argv.gco) {
@@ -96,6 +102,17 @@ _mkdirSync(`./browser_captures/${process.env.SELENIUM_BROWSER}`);
     }
   }
 
+  async function writeTestSuiteResultsHeader(testSuite) {
+    _mkdirSync(`./browser_captures/${process.env.SELENIUM_BROWSER}/${testSuite.start.format('YYYYMMDDHHmmSS')}`);
+    let resultFile = `./browser_captures/${process.env.SELENIUM_BROWSER}/${testSuite.start.format('YYYYMMDDHHmmSS')}/testResults.csv`;
+    fs.writeFileSync(resultFile, `testName;result;pnr;error\r\n`);
+  }
+
+  async function writeTestResults(test, testSuite) {
+    let resultFile = `./browser_captures/${process.env.SELENIUM_BROWSER}/${testSuite.start.format('YYYYMMDDHHmmSS')}/testResults.csv`;
+    fs.appendFileSync(resultFile, `${test.name};${SELENIUM_TEST_VARS['_resultStatus'] || ''};${SELENIUM_TEST_VARS['_pnr'] || ''};${SELENIUM_TEST_VARS['_resultMessage'] || ''}\r\n`);
+  }
+
 })();
 
 async function RunTest(test, testSuite) {
@@ -105,6 +122,8 @@ async function RunTest(test, testSuite) {
 
   let cmdStart = null;
   let cmdComplete = null;
+
+  SELENIUM_TEST_VARS = {};
 
   if (test.commands && test.commands.length > 0) {
     await runTestCommands(test);
@@ -142,15 +161,27 @@ async function RunTest(test, testSuite) {
 
     await runSearch(driver, test.data);
 
+    SELENIUM_TEST_VARS["_resultStatus"] = "OK";
+
     await _close({});
 
   } catch (err) {
+
+    SELENIUM_TEST_VARS["_resultStatus"] = "KO";
+    SELENIUM_TEST_VARS["_resultMessage"] = err.message;
+
     console.log(`Error occurred: ${err.message}`);
+
     if (driver) {
       await capturePage('error');
       await driver.quit();
       capturesToPdf(test.data);
     }
+  }
+
+  function setTestVars(name, value) {
+    SELENIUM_TEST_VARS[name] = value;
+    SELENIUM_SESSION_VARS[name] = value;
   }
 
   async function capturePage(captureTitle) {
@@ -558,7 +589,7 @@ async function RunTest(test, testSuite) {
       if (cmd.value.match(/^[_a-z][_a-z0-9]*$/i) == null) {
         throw `Store variable "${cmd.value}" is not valid.`;
       }
-      SELENIUM_SESSION_VARS[cmd.value] = cmd.target;
+      setTestVars(cmd.value, cmd.target);
       if (cmd.successMessage) {
         console.log(cmd.successMessage);
       }
@@ -594,7 +625,7 @@ async function RunTest(test, testSuite) {
       await driver.wait(until.elementLocated(by), SELENIUM_COMMAND_TIMEOUT)
         .then(async function (elm) {
           let elmText = await driver.executeScript(`return arguments[0].innerText;`, elm);
-          SELENIUM_SESSION_VARS[cmd.value] = elmText;
+          setTestVars(cmd.value, elmText);
           if (cmd.successMessage) {
             console.log(cmd.successMessage);
           }
@@ -1027,7 +1058,7 @@ async function RunTest(test, testSuite) {
       await driver.wait(until.elementLocated(by), SELENIUM_COMMAND_TIMEOUT)
         .then(async function (elm) {
           let attrValue = await driver.executeScript(`return arguments[0].getAttribute("${attrName}");`, elm);
-          SELENIUM_SESSION_VARS[cmd.value] = attrValue;
+          setTestVars(cmd.value, attrValue);
           if (cmd.successMessage) {
             console.log(cmd.successMessage);
           }
@@ -1818,9 +1849,15 @@ async function RunTest(test, testSuite) {
 
       if (data.payment.type == "card") {
 
+        /*
         await _waitForElementPresent({
           target: `css=form#booking-acquista-cdc-form input[name="tipologiaCarta"][value="${data.payment.cardIssuer}"] + label`
         });
+        */
+
+        if (argv.gco === false) {
+          await driver.sleep(2000);
+        }
 
         await _click({
           target: `css=form#booking-acquista-cdc-form input[name="tipologiaCarta"][value="${data.payment.cardIssuer}"] + label`
@@ -1888,7 +1925,9 @@ async function RunTest(test, testSuite) {
         });
 
         await _storeText({
-          target: 'document.querySelector(".thankyoupage .afterPayment h1 span").innerText'
+          target: 'css=.thankyoupage .afterPayment h1 span',
+          value: '_pnr',
+          successMessage: 'Captured PNR.'
         });
 
         await _captureEntirePageScreenshot({

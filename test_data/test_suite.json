@@ -8,7 +8,7 @@
             "description": "DOMESTIC FLIGHT OW",
             "data": {
                 "outbound": {
-                    "date": "22/06/2019",
+                    "date": "22/09/2019",
                     "departure": {
                         "city": "",
                         "airport": "FIUMICINO"
@@ -78,7 +78,7 @@
             "description": "DOMESTIC FLIGHT RT",
             "data": {
                 "outbound": {
-                    "date": "22/06/2019",
+                    "date": "22/09/2019",
                     "departure": {
                         "city": "",
                         "airport": "FIUMICINO"
@@ -90,7 +90,7 @@
                     "bookingClass": "ECONOMY CLASSIC"
                 },
                 "inbound": {
-                    "date": "29/06/2019",
+                    "date": "29/09/2019",
                     "departure": {
                         "city": "",
                         "airport": "CAPODICHINO"
@@ -144,8 +144,8 @@
                 ],
                 "payment": {
                     "type": "card",
-                    "cardIssuer": "Visa",
-                    "cardNumber": "4646464646464644",
+                    "cardIssuer": "MasterCard",
+                    "cardNumber": "5555555555554444",
                     "expiryMonth": "10",
                     "expiryYear": "2020",
                     "cvv": "737",
@@ -160,7 +160,7 @@
             "description": "INZ LIGHT FLIGHT OW",
             "data": {
                 "outbound": {
-                    "date": "29/06/2019",
+                    "date": "29/09/2019",
                     "departure": {
                         "city": "",
                         "airport": "FIUMICINO"
