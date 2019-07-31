@@ -30,7 +30,7 @@ const argv = require('yargs')
 
 dotenv.config();
 
-const SELENIUM_COMMAND_TIMEOUT = (process.env.SELENIUM_COMMAND_TIMEOUT ? int.parse(process.env.SELENIUM_COMMAND_TIMEOUT) : 60) * 1000;
+const SELENIUM_COMMAND_TIMEOUT = (process.env.SELENIUM_COMMAND_TIMEOUT ? parseInt(process.env.SELENIUM_COMMAND_TIMEOUT) : 60) * 1000;
 
 const SELENIUM_LOG_LEVEL = process.env.SELENIUM_LOG_LEVEL === 'DEBUG' ? logging.Level.ALL : logging.Level.INFO;
 
@@ -61,7 +61,7 @@ _mkdirSync(`./browser_captures/${process.env.SELENIUM_BROWSER}`);
   let test_selected = test_suite.tests;
   if (argv.st) {
     test_selected = test_selected.filter(function (t) {
-      return `\\s*${t.name}\\s*`.match(argv.st) !== null;
+      return ` ${argv.st} `.match(` ${t.name} `) !== null;
     });
     if (test_selected.length === 0) {
       console.log('Unable to run tests. Selected test(s) not found!');
