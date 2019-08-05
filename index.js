@@ -105,12 +105,27 @@ _mkdirSync(`./browser_captures/${process.env.SELENIUM_BROWSER}`);
   async function writeTestSuiteResultsHeader(testSuite) {
     _mkdirSync(`./browser_captures/${process.env.SELENIUM_BROWSER}/${testSuite.start.format('YYYYMMDDHHmmSS')}`);
     let resultFile = `./browser_captures/${process.env.SELENIUM_BROWSER}/${testSuite.start.format('YYYYMMDDHHmmSS')}/testResults.csv`;
-    fs.writeFileSync(resultFile, `testName;result;pnr;error\r\n`);
+    //fs.writeFileSync(resultFile, `testName;result;pnr;error\r\n`);
+    fs.writeFileSync(resultFile, `TEST_ID;TEST_NAME;FROM;TO;FLIGHT;DEPARTURE_DATE;RETURN_DATE;CLASS;ADULT;CHILD;INFANT;RESULT;PNR;ERROR\r\n`);
   }
 
   async function writeTestResults(test, testSuite) {
     let resultFile = `./browser_captures/${process.env.SELENIUM_BROWSER}/${testSuite.start.format('YYYYMMDDHHmmSS')}/testResults.csv`;
-    fs.appendFileSync(resultFile, `${test.name};${SELENIUM_TEST_VARS['_resultStatus'] || ''};${SELENIUM_TEST_VARS['_pnr'] || ''};${SELENIUM_TEST_VARS['_resultMessage'] || ''}\r\n`);
+    //fs.appendFileSync(resultFile, `${test.name};${SELENIUM_TEST_VARS['_resultStatus'] || ''};${SELENIUM_TEST_VARS['_pnr'] || ''};${SELENIUM_TEST_VARS['_resultMessage'] || ''}\r\n`);
+    let resultRow = `${test.name};${test.description}`;
+    resultRow = `${resultRow};${SELENIUM_TEST_VARS['_from'] || ''}`;
+    resultRow = `${resultRow};${SELENIUM_TEST_VARS['_to'] || ''}`;
+    resultRow = `${resultRow};${SELENIUM_TEST_VARS['_travelType'] || ''}`;
+    resultRow = `${resultRow};${SELENIUM_TEST_VARS['_departureDate'] || ''}`;
+    resultRow = `${resultRow};${SELENIUM_TEST_VARS['_returnDate'] || ''}`;
+    resultRow = `${resultRow};${SELENIUM_TEST_VARS['_class'] || ''}`;
+    resultRow = `${resultRow};${SELENIUM_TEST_VARS['_adults'] || ''}`;
+    resultRow = `${resultRow};${SELENIUM_TEST_VARS['_childs'] || ''}`;
+    resultRow = `${resultRow};${SELENIUM_TEST_VARS['_infants'] || ''}`;
+    resultRow = `${resultRow};${SELENIUM_TEST_VARS['_resultStatus'] || ''}`;
+    resultRow = `${resultRow};${SELENIUM_TEST_VARS['_pnr'] || ''}`;
+    resultRow = `${resultRow};${SELENIUM_TEST_VARS['_resultMessage'] || ''}`;
+    fs.appendFileSync(resultFile, `${resultRow}\r\n`);
   }
 
 })();
@@ -334,6 +349,8 @@ async function RunTest(test, testSuite) {
       successMessage: `${oneWay ? "One way" : "Round trip"} travel selected.`
     });
 
+    SELENIUM_TEST_VARS['_travelType'] = `${oneWay ? "OneWay" : "RoundTrip"}`;
+
     if (argv.gco === false) {
       await driver.sleep(2000);
     }
@@ -373,20 +390,16 @@ async function RunTest(test, testSuite) {
       successMessage: 'Travel options panel displayed'
     });
 
-    let clickCount;
     let passengers = test.data.passengers;
+    let clickCount;
 
     clickCount = passengers.filter(function (p) {
       return p.type == "adult";
     }).length - 1;
 
+    SELENIUM_TEST_VARS['_adults'] = clickCount + 1;
+
     if (clickCount > 0) {
-      /*
-      await _click({
-        target: 'xpath=//*[@id="addAdults"]',
-        value: `${clickCount}`
-      });
-      */
       await _runScript({
         target: `var elm = document.getElementById("addAdults"); for (var i = 0; i < ${clickCount}; i++) { elm.click(); };`
       });
@@ -396,13 +409,9 @@ async function RunTest(test, testSuite) {
       return p.type == "child";
     }).length;
 
+    SELENIUM_TEST_VARS['_childs'] = clickCount;
+
     if (clickCount > 0) {
-      /*
-      await _click({
-        target: 'xpath=//*[@id="addKids"]',
-        value: `${clickCount}`
-      });
-      */
       await _runScript({
         target: `var elm = document.getElementById("addKids"); for (var i = 0; i < ${clickCount}; i++) { elm.click(); };`
       });
@@ -412,13 +421,9 @@ async function RunTest(test, testSuite) {
       return p.type == "infant";
     }).length;
 
+    SELENIUM_TEST_VARS['_infants'] = clickCount;
+
     if (clickCount > 0) {
-      /*
-      await _click({
-        target: 'xpath=//*[@id="addBabies"]',
-        value: `${clickCount}`
-      });
-      */
       await _runScript({
         target: `var elm = document.getElementById("addBabies"); for (var i = 0; i < ${clickCount}; i++) { elm.click(); };`
       });
@@ -1273,6 +1278,8 @@ async function RunTest(test, testSuite) {
 
   async function setOutboundDate(flightDate, oneWay) {
 
+    SELENIUM_TEST_VARS['_departureDate'] = `${flightDate}`;
+
     await _type({
       target: 'id=data-andata--prenota-desk',
       value: `${flightDate}`
@@ -1303,6 +1310,8 @@ async function RunTest(test, testSuite) {
 
   async function setInboundDate(flightDate) {
 
+    SELENIUM_TEST_VARS['_returnDate'] = `${flightDate}`;
+
     await _type({
       target: 'id=data-ritorno--prenota-desk',
       value: `${flightDate}`,
@@ -1330,6 +1339,8 @@ async function RunTest(test, testSuite) {
 
   async function setDepartureCity(data) {
 
+    SELENIUM_TEST_VARS['_from'] = `${data.departure.airport ? data.departure.airport : data.departure.city}`;
+
     await _type({
       target: 'xpath=//*[@class="cerca-volo"]//*[@class="partenza-destinazione"]//input[@type="text" and contains(@id,"partenza")]',
       value: `${data.departure.airport ? data.departure.airport : data.departure.city}`,
@@ -1356,6 +1367,8 @@ async function RunTest(test, testSuite) {
   }
 
   async function setArrivalCity(data) {
+
+    SELENIUM_TEST_VARS['_to'] = `${data.arrival.airport ? data.arrival.airport : data.arrival.city}`;
 
     await _type({
       target: 'id=luogo-arrivo--prenota-desk',
@@ -1461,6 +1474,8 @@ async function RunTest(test, testSuite) {
       successMessage: 'Outbound flight selected.'
     });
 
+    SELENIUM_TEST_VARS['_class'] = `${data.outbound.bookingClass}`;
+    
     await _waitForElementPresent({
       target: 'xpath=//*[contains(@class,"bookingTable") and @data-index-route="0"]/*[contains(@class,"bookingLoaderCover") and contains(@style,"display: none")]',
       successMessage: 'Outbound flight selection loader dismissed.'
@@ -1483,6 +1498,8 @@ async function RunTest(test, testSuite) {
         successMessage: 'Inbound flight selected.'
       });
 
+      SELENIUM_TEST_VARS['_class'] = `${data.outbound.bookingClass}/${data.outbound.bookingClass}`;
+      
       await _waitForElementPresent({
         target: 'xpath=//*[contains(@class,"bookingTable") and @data-index-route="1"]/*[contains(@class,"bookingLoaderCover") and contains(@style,"display: none")]',
         successMessage: 'Inbound flight selection loader dismissed.'
